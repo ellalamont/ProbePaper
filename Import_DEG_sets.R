@@ -60,3 +60,16 @@ for (i in 1:length(list_dfs)) {
   list_dfs_2[[current_df_name]] <- current_df
   
 }
+
+
+
+###########################################################
+############# IMPORT BOB's METAGENESETS DATA ##############
+
+
+`MetaGeneSets_GoodSputumSubset.vs.Broth_UP` <- read.delim("Data/Differential_Expression/GoodSputumSubset_vs_Broth/W0.MTb.MetaGeneSets.UP.txt")
+`MetaGeneSets_Marmoset.vs.Broth_UP` <- read.delim("Data/Differential_Expression/Marmoset_vs_Broth/Marmoset.MTb.MetaGeneSets.UP.txt")
+
+
+
+

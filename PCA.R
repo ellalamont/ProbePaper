@@ -10,7 +10,7 @@
 # Two options in base R, prcomp() and princomp()
 # prcomp() is preferred according to the website above
 
-source("Import_data.R") # To get GoodBiolSamples_tpm and BiolSamples_pipeSummary
+source("Import_data.R") # To get GoodBiolSamples_tpm and BiolSamples_pipeSummary and GoodBiolSamples_tpmF
 
 
 # Plot basics
@@ -92,6 +92,63 @@ PCA_3D <- plot_ly(my_PCA_df, x = ~PC1, y = ~PC2, z = ~PC3,
                   # text = ~Replicate
 )
 PCA_3D
+
+###########################################################
+############# PCA BIOL with BROTH FILTERED ################
+
+# Convert gene column to rownames
+my_tpm <- GoodBiolSamples_tpmF %>% column_to_rownames(var = "X")
+
+# Transform the data
+my_tpm_t <- as.data.frame(t(my_tpm))
+
+# Remove columns that are all zero so the scale works for prcomp
+my_tpm_t2 <- my_tpm_t %>% select_if(colSums(.) != 0)
+
+# Make the actual PCA
+my_PCA <- prcomp(my_tpm_t2, scale = TRUE)
+
+# See the % Variance explained
+summary(my_PCA)
+summary_PCA <- format(round(as.data.frame(summary(my_PCA)[["importance"]]['Proportion of Variance',]) * 100, digits = 1), nsmall = 1) # format and round used to control the digits after the decimal place
+summary_PCA[1,1] # PC1 explains 30.8% of variance
+summary_PCA[2,1] # PC2 explains 12.0% of variance
+summary_PCA[3,1] # PC3 explains 8.0% of variance
+
+# MAKE PCA PLOT with GGPLOT 
+my_PCA_df <- as.data.frame(my_PCA$x[, 1:3]) # Extract the first 3 PCs
+my_PCA_df <- data.frame(SampleID = row.names(my_PCA_df), my_PCA_df)
+my_PCA_df <- merge(my_PCA_df, BiolSamples_pipeSummary, by = "SampleID", )
+
+PCA_tpm_1 <- my_PCA_df %>% 
+  ggplot(aes(x = PC1, y = PC2, fill = Type, shape = Type)) + 
+  geom_point(aes(fill = Type, shape = Type), size = 5, alpha = 0.7, stroke = 0.8) + 
+  scale_fill_manual(values = my_fav_colors) +  
+  scale_shape_manual(values = my_fav_shapes) + 
+  # geom_text_repel(aes(label = Week), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
+  labs(title = "PCA: >1M reads and >80% genes with at least 10 reads",
+       subtitle = "TPM; Rvnc removed",
+       x = paste0("PC1: ", summary_PCA[1,1], "%"),
+       y = paste0("PC2: ", summary_PCA[2,1], "%")) +
+  my_plot_themes
+PCA_tpm_1
+ggsave(PCA_tpm_1,
+       file = paste0("TPM_GoodSamples_Filtered_1.pdf"),
+       path = "Figures/PCA",
+       width = 8, height = 5, units = "in")
+
+
+# 3D plot
+# https://plotly.com/r/pca-visualization/
+PCA_3D <- plot_ly(my_PCA_df, x = ~PC1, y = ~PC2, z = ~PC3,
+                  type = "scatter3d", mode = "markers",
+                  color = ~Type# , 
+                  # colors = c12,
+                  # text = ~Replicate
+)
+PCA_3D
+
+
 
 
 

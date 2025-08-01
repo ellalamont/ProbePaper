@@ -29,6 +29,10 @@ ui <- fluidPage(
                        label = "Volcano plots",
                        choices = df_names,
                        width = "40%"),
+           
+           # Add checkbox for removing the non coding RNAs
+           checkboxInput("FilterOut_Rvnc", label = "Remove Rvnc genes", value = T),
+           
            fluidRow(
              column(width = 3,
                     textInput("my_GeneID", 
@@ -88,8 +92,18 @@ server <- function(input, output, session) {
     gene_set <- list_dfs_2[[input$my_comparison]] %>%
       filter(GENE_ID %in% allGeneSetList[[input$my_GeneSetSource]][[input$my_GeneSet]])
     
+    # Make new data name for plotting
+    plot_data <- list_dfs_2[[input$my_comparison]]
     
-    my_volcano <- list_dfs_2[[input$my_comparison]] %>%
+    # Filter out the Rvnc genes if requested (made new dataframe to plot)
+    if (input$FilterOut_Rvnc) {
+      plot_data <- plot_data %>% 
+        filter(!str_detect(GENE_ID, regex("Rvnc", ignore_case = T)))
+    }
+
+    # Make the Volcano Plot
+    my_volcano <- plot_data %>%
+      
       ggplot(aes(x = LOG2FOLD, y = -log10(AVG_PVALUE), col = DE, label = DE_labels, text = GENE_ID, label2 = GENE_NAME, label3 = PRODUCT)) + 
       geom_point() + 
       

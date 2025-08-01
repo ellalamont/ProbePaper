@@ -41,15 +41,11 @@ library(DuffyTools)
 # Labelled Colors
 my_fav_colors <- c(`Sputum` = "#0072B2", `Caseum mimic` = "green4", `Broth`= "#999999", `Marmoset` = "#6A3D9A", `Rabbit` = "#E69F00")
 
-# Labelled Shape
+# Labelled Shapes
 my_fav_shapes <- c(`Sputum` = 21, `Caseum mimic` = 22, `Broth`= 23, `Marmoset` = 24, `Rabbit` = 25)
 
-cbPalette_1 <- c("#999999", "#E69F00") # Gold and Grey
-cbPalette_1.5 <- c("#E69F00", "#999999") # Gold and Grey
-cbPalette_2 <- c( "#0072B2", "#999999") # Blue and Grey
+
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-cbPalette2 <-  c("#bfbfbf", "#56B4E9")
-cbPalette3 <-  c("#bfbfbf", "#E69F00")
 cbPalette4 <- c("#56B4E9", "#009E73", "#F0E442","#CC79A7")
 c25 <- c(
   "dodgerblue2", "#E31A1C", "green4",
@@ -219,6 +215,17 @@ GoodBiolSamples_tpm <- All_tpm %>% select("X", all_of(GoodSampleList))
 
 
 ###########################################################
+########### FILTER TPM TO REMOVE NON CODING RNA ###########
+
+# Not sure if this is right but will do it for now
+# Removing the Rvncs (non coding RNAs) because I don't think the current probes contain them! (Previous probes have)
+## I think this because they are missing in PredictTB Run 1 THP1 spiked sample but present in that same sample from ProbeTest5
+# The Pathcap people also had issues with ncRNAs: https://www.nature.com/articles/s41598-019-55633-6#Sec8
+
+GoodBiolSamples_tpmF <- GoodBiolSamples_tpm %>% filter(!str_detect(X, regex("Rvnc", ignore_case = T)))
+
+
+###########################################################
 ############### IMPORT AND PROCESS RAW READS ##############
 
 Run1_RawReads <- read.csv("Data/PredictTB_Run1/Mtb.Expression.Gene.Data.readsM.csv")
@@ -235,5 +242,5 @@ All_RawReads <- merge(Run1_RawReads, ProbeTest3_RawReads_marm, all = T)
 All_RawReads <- merge(All_RawReads, ProbeTest5_RawReads_Broth)
 
 # Just keep the samples passing filter
-All_RawReads <- All_RawReads %>% select("X", all_of(GoodSampleList), "H37Ra_Broth_4_S7", "H37Ra_Broth_5_S8", "H37Ra_Broth_6_S9")
+GoodBiolSamples_RawReads <- All_RawReads %>% select("X", all_of(GoodSampleList), "H37Ra_Broth_4_S7", "H37Ra_Broth_5_S8", "H37Ra_Broth_6_S9")
 
