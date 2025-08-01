@@ -178,7 +178,7 @@ Rabbit_GoodSampleList <- GoodSampleList[grep("Cav", GoodSampleList)]
 Run1_tpm <- read.csv("Data/PredictTB_Run1/Mtb.Expression.Gene.Data.TPM.csv")
 Run1_tpm <- Run1_tpm %>% select(-contains("TBAIT"))
 
-Run1_SputumSubset_tpm <- Run1_tpm %>% select(all_of(SputumSubset_list))
+Run1_SputumSubset_tpm <- Run1_tpm %>% select(X, all_of(SputumSubset_list))
 
 # Just pull the tpm of the THP1 spiked from another run: THP1 1e6_1 (Predict rack 2 box 1 I04)
 # Need THP1 1e6_1a from the Januaray run. Also need 
