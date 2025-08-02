@@ -10,7 +10,7 @@ library(ggpubr)
 library(RColorBrewer)
 library(knitr)
 library(plotly)
-library(ggprism) # for add_pvalue()
+# library(ggprism) # for add_pvalue()
 library(rstatix) # for adjust_pvalue
 library(ggpmisc) # https://stackoverflow.com/questions/7549694/add-regression-line-equation-and-r2-on-graph
 library(ggrepel)
