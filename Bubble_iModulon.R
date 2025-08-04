@@ -22,6 +22,8 @@ my_plot_themes <- theme_bw() +
         plot.margin = margin(10, 10, 10, 20)# ,
   )
 
+facet_themes <- theme(strip.background=element_rect(fill="white", linewidth = 0.9),
+                      strip.text = element_text(size = 9))
 
 ###########################################################
 ######## iMODULONS: COLLECT AND ORGANIZE SAMPLES ##########
@@ -202,6 +204,38 @@ for (cat in unique(na.omit(merged_long$iModulonCategory))) {
          path = "Figures/Bubbles/iModulons",
          width = 7.5, height = 6, units = "in")
   }
+
+
+
+
+###########################################################
+################# iModulons: FACETED BUBBLES ##############
+
+# Combining some different things here, but all are the iModulons
+merged_long2 <- merged_long %>% 
+  mutate(Categories2 = case_when(
+    str_detect(PathName, "MarR") ~ "Acid stress",
+    str_detect(PathName, "Growth") ~ "Growth",
+    str_detect(PathName, "IdeR|Zur|RicR") ~ "Metal",
+    TRUE ~ "other"
+  ))
+
+
+iModulons_bubble_facet <- merged_long2 %>%
+  filter(Categories2 != "other") %>% 
+  ggplot(aes(x = Type, y = PathName, fill = LOG2FOLD, shape = Type)) +
+  geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(Significance == "significant", 0.8, 0)), size = 6, alpha = 1) +
+  scale_shape_manual(values = c(21, 21, 21, 21)) +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
+  geom_label(aes(x = 0.3, label = paste0("n = ", N_Genes)), hjust = 0, size = 2.7, fill = "white", label.size = NA) +
+  scale_x_discrete(expand = expansion(mult = c(0.1, 0.1))) +
+  guides(shape = "none") +
+  facet_col(facets = ~Categories2, scales = "free_y", space = "free") + 
+  labs(title = "My iModulon subsets",
+       subtitle = "circles without outlines means not significant",
+       y = NULL, x = NULL) +
+  my_plot_themes + facet_themes
+iModulons_bubble_facet
 
 
 ###########################################################

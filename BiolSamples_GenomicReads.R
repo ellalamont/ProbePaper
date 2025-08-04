@@ -80,7 +80,8 @@ P_Genomic_box1 <- BiolSamples_pipeSummary %>%
   filter(Type != "Broth") %>%
   ggplot(aes(x = Type, y = P_Genomic)) + 
   geom_boxplot(fill="grey", width = 0.4, outlier.size = 0.9, alpha = 0.2) + 
-  geom_point(aes(fill = Type), shape = 21, alpha = 0.8, size = 2, position = position_jitter(0.2)) + 
+  # geom_point(aes(fill = Type), shape = 21, alpha = 0.8, size = 2, position = position_jitter(0.2)) + 
+  # geom_text_repel(aes(label = format(SampleID, big.mark = ",")), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
   scale_fill_manual(values=my_fav_colors) +  
   scale_y_continuous(limits = c(0,100), breaks = seq(0, 100, 10)) + 
   labs(title = "P_Genomic for all biological sample types",
@@ -104,6 +105,7 @@ TenReads_box1 <- BiolSamples_pipeSummary %>%
   geom_boxplot(fill="grey", width = 0.6, outlier.size = 0.9, alpha = 0.2) + 
   geom_point(aes(fill = Type), shape = 21, alpha = 0.8, size = 2, position = position_jitter(0.2)) + 
   scale_fill_manual(values=my_fav_colors) +  
+  # geom_text_repel(aes(label = format(SampleID, big.mark = ",")), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
   # geom_point(shape = 16, alpha = 0.8, size = 1.5, position = position_jitter(0.2)) + 
   geom_hline(yintercept = 4499*0.8, linetype = "dashed", alpha = 0.5) + 
   annotate("text", x = 0.8, y = 4499*0.8, label = "80%", hjust = 1, vjust = -0.5, color = "black") + 

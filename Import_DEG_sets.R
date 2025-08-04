@@ -54,8 +54,15 @@ for (i in 1:length(list_dfs)) {
                           ifelse(current_df$LOG2FOLD > 1 & current_df$AVG_PVALUE < 0.05, "significant up", "not significant"))
   current_df$DE <- factor(current_df$DE, levels = ordered_DE)
   
+  # Make another column where the threshold for DEG is 2 (above is 1)
+  current_df$DE_2 <- ifelse(current_df$LOG2FOLD < -2 & current_df$AVG_PVALUE < 0.05, "significant down",
+                          ifelse(current_df$LOG2FOLD > 2 & current_df$AVG_PVALUE < 0.05, "significant up", "not significant"))
+  current_df$DE_2 <- factor(current_df$DE_2, levels = ordered_DE)
+  
   # Make the column with DE gene names for plotting on graph
   current_df$DE_labels <- ifelse(current_df$DE != "not significant", current_df$GENE_NAME, NA)
+  
+  current_df$DE_2_labels <- ifelse(current_df$DE_2 != "not significant", current_df$GENE_NAME, NA)
   
   list_dfs_2[[current_df_name]] <- current_df
   
