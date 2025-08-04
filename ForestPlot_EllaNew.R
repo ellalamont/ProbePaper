@@ -114,9 +114,6 @@ combined_df_4 <- combined_df_4 %>%
 ################### GGFORESTPLOT PACKAGE ##################
 
 # https://nightingalehealth.github.io/ggforestplot/articles/ggforestplot.html
-# devtools::install_github("NightingaleHealth/ggforestplot")
-library(ggforestplot)
-library(ggforce)
 
 test <- combined_df_4 %>% arrange(Label)
 
