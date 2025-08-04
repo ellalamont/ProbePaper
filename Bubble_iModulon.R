@@ -101,7 +101,7 @@ merged_long <- merged_df %>%
   pivot_longer(cols = -c(1:3),
                names_to = c("Type", ".value"),
                names_sep = "_") %>% 
-mutate(PathName = str_wrap(PathName, width = 50)) %>%
+  mutate(PathName = str_wrap(PathName, width = 50)) %>%
   mutate(Significance = ifelse(AVG.PVALUE < 0.05, "significant", "not significant"))
 
 ordered_type <- c("Sputum", "Marmoset", "Rabbit", "Caseum mimic")
