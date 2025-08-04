@@ -120,7 +120,9 @@ merged_long$Type <- factor(merged_long$Type, levels = ordered_type)
 Fav_Pathways <- SputumVsBroth_iModulons %>% 
   # arrange(Sputum_AVG.PVALUE) %>% slice_head(n=20) %>% 
   filter(Sputum_AVG.PVALUE < 0.05) %>%
+  mutate(PathName = str_wrap(PathName, width = 50)) %>%
   pull(PathName)
+
 
 merged_subset_2 <- merged_long %>% filter(PathName %in% Fav_Pathways) 
 # merged_subset_2$Significance <- ifelse(merged_subset_2$AVG.PVALUE < 0.05, "significant", "not significant")
@@ -154,40 +156,8 @@ ggsave(iModulons_bubble_1,
 ###########################################################
 ############ iMODULONS: MAKE LISTS OF GROUPS ##############
 
-CentralCarbon_iModulons <- c("Peptidoglycan Biosynthesis", "Central Carbon Metabolism", "Fumarate Reductase", "PrpR", "BkaR", "Nicotinate Metabolism") # Needs the \\ to detect it
-CentralCarbon_iModulons_pattern <- str_c(CentralCarbon_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
 
-AminoAcid_iModulons <- c("GroEL-GroES Complex", "Leucine Related", "LysG", "ArgR") # Needs the \\ to detect it
-AminoAcid_iModulons_pattern <- str_c(AminoAcid_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
-
-NucleicAcid_iModulons <- c("PyrR", "Rv0135\\+Rv1019", "Nucleic Acid Hydrolysis") # Needs the \\ to detect it
-NucleicAcid_iModulons_pattern <- str_c(NucleicAcid_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
-
-FattyAcid.Cholesterol_iModulons <- c("Fatty Acid Biosynthesis", "KstR2", "Mycofactocin Synthesis Pathway", "FasR", "Polyketide Synthase Complex", "Rv0681") # Needs the \\ to detect it
-FattyAcid.Cholesterol_iModulons_pattern <- str_c(FattyAcid.Cholesterol_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
-
-Metal_iModulons <- c("RicR", "IdeR", "M-box", "Zur", "Hpt-2b Induced") # Needs the \\ to detect it
-Metal_iModulons_pattern <- str_c(Metal_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
-
-SulfurMetabolism_iModulons <- c("Sulfur Metabolism") # Needs the \\ to detect it
-SulfurMetabolism_iModulons_pattern <- str_c(SulfurMetabolism_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
-
-Growth_iModulons <- c("Positive Regulation of Growth") # Needs the \\ to detect it
-Growth_iModulons_pattern <- str_c(Growth_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
-
-Redox_iModulons <- c("DevR-1", "WhiB4", "DevR-2", "WhiB1", "WhiB4/IdeR", "Rv1828/SigH", "Rv1776c\\+WhiB4", "VirS", "WhiB6") # Needs the \\ to detect it
-Redox_iModulons_pattern <- str_c(Redox_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
-
-AcidStress_iModulons <- c("MarR") # Needs the \\ to detect it
-AcidStress_iModulons_pattern <- str_c(AcidStress_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
-
-Antibiotic_iModulons <- c("Lsr2", "Blal", "Rv0078\\+Rv2034", "WhiB7", "IniR") # Needs the \\ to detect it
-Antibiotic_iModulons_pattern <- str_c(Antibiotic_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
-
-Virulence.Persistence_iModulons <- c("Rv0576", "Mce1R", "SigH", "PhoP", "Mce3R", "MprA", "PDIM\\;PGL Synthesis", "Rv2488c", "SigC", "SigD", "MbcA\\+Rv3249c\\+Rv3066", "SigK") # Needs the \\ to detect it
-Virulence.Persistence_iModulons_pattern <- str_c(Virulence.Persistence_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
-
-# Make new column with this above information
+# Make new column with Groups, from Import_DEG_sets.R
 merged_long <- merged_long %>%
   mutate(iModulonCategory = case_when(
     str_detect(PathName, CentralCarbon_iModulons_pattern) ~ "Central Carbon",
@@ -238,45 +208,45 @@ for (cat in unique(na.omit(merged_long$iModulonCategory))) {
 ########### iModulons: MAKE INDIVIDUAL BUBBLES ############
 
 ### CENTRAL CARBON METABOLISM ###
-iModulons_bubble_CCM <- merged_long %>% 
-  filter(str_detect(PathName, CentralCarbon_iModulons_pattern)) %>% 
-  ggplot(aes(x = Type, y = PathName, fill = LOG2FOLD, shape = Type)) + 
-  geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(Significance == "significant", 0.8, 0)), size = 6, alpha = 1) +
-  scale_shape_manual(values = c(21, 21, 21, 21)) +
-  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
-  geom_label(aes(x = 0.3, label = paste0("n = ", N_Genes)), hjust = 0, size = 2.7, fill = "white", label.size = NA) +
-  scale_x_discrete(expand = expansion(mult = c(0.1, 0.1))) + 
-  guides(shape = "none") + 
-  labs(title = "CCM iModulons that are significant in the Sputum",
-       subtitle = "circles without outlines means not significant",
-       y = NULL, x = NULL) + 
-  my_plot_themes
-iModulons_bubble_CCM
-ggsave(iModulons_bubble_CCM,
-       file = paste0("iModulons_bubble_CCM.pdf"),
-       path = "Figures/Bubbles/iModulons",
-       width = 7.5, height = 6, units = "in")
-
-### AMINO ACID ###
-iModulons_bubble_AA <- merged_long %>% 
-  filter(str_detect(PathName, AminoAcid_iModulons_pattern)) %>% 
-  ggplot(aes(x = Type, y = PathName, fill = LOG2FOLD, shape = Type)) + 
-  geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(Significance == "significant", 0.8, 0)), size = 6, alpha = 1) +
-  scale_shape_manual(values = c(21, 21, 21, 21)) +
-  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
-  geom_label(aes(x = 0.3, label = paste0("n = ", N_Genes)), hjust = 0, size = 2.7, fill = "white", label.size = NA) +
-  scale_x_discrete(expand = expansion(mult = c(0.1, 0.1))) + 
-  guides(shape = "none") + 
-  labs(title = "Amino Acid iModulons that are significant in the Sputum",
-       subtitle = "circles without outlines means not significant",
-       y = NULL, x = NULL) + 
-  my_plot_themes
-iModulons_bubble_AA
-ggsave(iModulons_bubble_AA,
-       file = paste0("iModulons_bubble_AA.pdf"),
-       path = "Figures/Bubbles/iModulons",
-       width = 7.5, height = 6, units = "in")
-
-
+# iModulons_bubble_CCM <- merged_long %>% 
+#   filter(str_detect(PathName, CentralCarbon_iModulons_pattern)) %>% 
+#   ggplot(aes(x = Type, y = PathName, fill = LOG2FOLD, shape = Type)) + 
+#   geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(Significance == "significant", 0.8, 0)), size = 6, alpha = 1) +
+#   scale_shape_manual(values = c(21, 21, 21, 21)) +
+#   scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
+#   geom_label(aes(x = 0.3, label = paste0("n = ", N_Genes)), hjust = 0, size = 2.7, fill = "white", label.size = NA) +
+#   scale_x_discrete(expand = expansion(mult = c(0.1, 0.1))) + 
+#   guides(shape = "none") + 
+#   labs(title = "CCM iModulons that are significant in the Sputum",
+#        subtitle = "circles without outlines means not significant",
+#        y = NULL, x = NULL) + 
+#   my_plot_themes
+# iModulons_bubble_CCM
+# ggsave(iModulons_bubble_CCM,
+#        file = paste0("iModulons_bubble_CCM.pdf"),
+#        path = "Figures/Bubbles/iModulons",
+#        width = 7.5, height = 6, units = "in")
+# 
+# ### AMINO ACID ###
+# iModulons_bubble_AA <- merged_long %>% 
+#   filter(str_detect(PathName, AminoAcid_iModulons_pattern)) %>% 
+#   ggplot(aes(x = Type, y = PathName, fill = LOG2FOLD, shape = Type)) + 
+#   geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(Significance == "significant", 0.8, 0)), size = 6, alpha = 1) +
+#   scale_shape_manual(values = c(21, 21, 21, 21)) +
+#   scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
+#   geom_label(aes(x = 0.3, label = paste0("n = ", N_Genes)), hjust = 0, size = 2.7, fill = "white", label.size = NA) +
+#   scale_x_discrete(expand = expansion(mult = c(0.1, 0.1))) + 
+#   guides(shape = "none") + 
+#   labs(title = "Amino Acid iModulons that are significant in the Sputum",
+#        subtitle = "circles without outlines means not significant",
+#        y = NULL, x = NULL) + 
+#   my_plot_themes
+# iModulons_bubble_AA
+# ggsave(iModulons_bubble_AA,
+#        file = paste0("iModulons_bubble_AA.pdf"),
+#        path = "Figures/Bubbles/iModulons",
+#        width = 7.5, height = 6, units = "in")
+# 
+# 
 
 

@@ -38,7 +38,7 @@ Sputum_data <- plotGeneSetForest(file = list_dfs_2$GoodSputumSubset.ComparedTo.B
                              geneSets = allGeneSetList$MTb.iModulons,
                              main = "H37Ra vs W0 sputum subset",
                              min.genes.per.set = 3,
-                             max.show = 80,
+                             max.show = 80, # There will only be 71 because of the 3 threshold above
                              text.cex = 1.1, pt.cex = 1.25, lwd = 3.5)
 write.csv(Sputum_data,
           file = "Figures/ForestPlots/EllaNew/Sputum_iModulonsForest.csv")

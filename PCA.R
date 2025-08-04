@@ -39,7 +39,7 @@ my_fav_shapes <- c(`Sputum` = 21, `Caseum mimic` = 22, `Broth`= 23, `Marmoset` =
 
 ###########################################################
 ################## PCA BIOL with BROTH ####################
-# Passing filter is >1,000,000 genomic reads and >80% genes with at least 10 reads, already filtered in Import_data.R
+# Passing filter is >1,000,000 genomic reads and >80% genes with at least 10 reads, already subsetted in Import_data.R
 
 # Convert gene column to rownames
 my_tpm <- GoodBiolSamples_tpm %>% column_to_rownames(var = "X")
@@ -56,9 +56,9 @@ my_PCA <- prcomp(my_tpm_t2, scale = TRUE)
 # See the % Variance explained
 summary(my_PCA)
 summary_PCA <- format(round(as.data.frame(summary(my_PCA)[["importance"]]['Proportion of Variance',]) * 100, digits = 1), nsmall = 1) # format and round used to control the digits after the decimal place
-summary_PCA[1,1] # PC1 explains 30.7% of variance
-summary_PCA[2,1] # PC2 explains 12.0% of variance
-summary_PCA[3,1] # PC3 explains 8.0% of variance
+summary_PCA[1,1] # PC1 explains 34.1% of variance
+summary_PCA[2,1] # PC2 explains 12.4% of variance
+summary_PCA[3,1] # PC3 explains 9.1% of variance
 
 # MAKE PCA PLOT with GGPLOT 
 my_PCA_df <- as.data.frame(my_PCA$x[, 1:3]) # Extract the first 3 PCs
@@ -95,6 +95,7 @@ PCA_3D
 
 ###########################################################
 ############# PCA BIOL with BROTH FILTERED ################
+# Filtered meaning the Rvnc genes have been removed
 
 # Convert gene column to rownames
 my_tpm <- GoodBiolSamples_tpmF %>% column_to_rownames(var = "X")
@@ -111,9 +112,9 @@ my_PCA <- prcomp(my_tpm_t2, scale = TRUE)
 # See the % Variance explained
 summary(my_PCA)
 summary_PCA <- format(round(as.data.frame(summary(my_PCA)[["importance"]]['Proportion of Variance',]) * 100, digits = 1), nsmall = 1) # format and round used to control the digits after the decimal place
-summary_PCA[1,1] # PC1 explains 30.8% of variance
-summary_PCA[2,1] # PC2 explains 12.0% of variance
-summary_PCA[3,1] # PC3 explains 8.0% of variance
+summary_PCA[1,1] # PC1 explains 34.2% of variance
+summary_PCA[2,1] # PC2 explains 12.5% of variance
+summary_PCA[3,1] # PC3 explains 9.1% of variance
 
 # MAKE PCA PLOT with GGPLOT 
 my_PCA_df <- as.data.frame(my_PCA$x[, 1:3]) # Extract the first 3 PCs

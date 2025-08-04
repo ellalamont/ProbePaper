@@ -83,21 +83,27 @@ sputumOnly_pipeSummary <- Run1_pipeSummary %>% filter(str_detect(Type, "sputum")
 # set.seed(2)
 # set.seed(5)
 set.seed(4)
-SputumSubset_pipeSummary <- slice_sample(sputumOnly_pipeSummary, n = 12)
-SputumSubset_list <- SputumSubset_pipeSummary %>% pull(SampleID)
+# SputumSubset_pipeSummary <- slice_sample(sputumOnly_pipeSummary, n = 12)
+# SputumSubset_list <- SputumSubset_pipeSummary %>% pull(SampleID)
 # Save this list just in case it keeps changing
 # SputumSubset_list <- c("W0_13004_S53", "W0_12034_S29", "W0_12009_S4", "W0_15081_S49", "W0_14113_S41", "W0_12012_S6", "W0_12038_S31", "W0_14044_S36", "W0_15035_S25", "W0_12029_S10", "W0_12028_S9", "W0_11011_S16") # set seed 2
-SputumSubset_list <- c("W0_12028_S9", "W0_11047_S22",  "W0_12010_S5", "W0_14048_S37", "W0_15045_S26", "W0_11012_S17", "W0_13027_S15", "W0_11011_S16", "W0_12083_S39", "W0_14005_S55", "W0_15065_S47", "W0_14113_S41") # set seed 4
+# SputumSubset_list <- c("W0_12028_S9", "W0_11047_S22",  "W0_12010_S5", "W0_14048_S37", "W0_15045_S26", "W0_11012_S17", "W0_13027_S15", "W0_11011_S16", "W0_12083_S39", "W0_14005_S55", "W0_15065_S47", "W0_14113_S41") # set seed 4
+# Actually now thinking I should only inlucde samples with TOTAL reads > 1 million (everything else is failed)
+sputumOnly_pipeSummary2 <- sputumOnly_pipeSummary %>% filter(RawReads >= 1e6)
+set.seed(42)
+SputumSubset_pipeSummary <- slice_sample(sputumOnly_pipeSummary2, n = 12)
+SputumSubset_list <- SputumSubset_pipeSummary %>% pull(SampleID)
+SputumSubset_list <- c("W0_15081_S49", "W0_11011_S16", "W0_13045_S34", "W0_12024_S8", "W0_12043_S32", "W0_13027_S15", "W0_12010_S5", "W0_12007_S2", "W0_15089_S51", "W0_12008_S3", "W0_12032_S28", "W0_12083_S39")
 
 
 
 ### PREDICTTB RUN 1 MIMIC and RABBIT DATA ###
-MimicRabbit_pipeSummary <- Run1_pipeSummary %>% filter(Type %in% c("Caseum mimic", "Rabbit"))
+MimicRabbit_pipeSummary <- Run1_pipeSummary %>% filter(Type %in% c("Caseum mimic", "Rabbit")) %>% filter(RawReads >=1e6)
 
 ### MARMOSET DATA FROM PROBETEST 3 ###
 # Pull out the marmoset information from ProbeTest3
 ProbeTest3_pipeSummary <- read.csv("Data/ProbeTest3/ProbeTest3_Pipeline.Summary.Details.csv") 
-Marmoset_pipeSummary <- ProbeTest3_pipeSummary %>% filter(SampleID %in% c("BQ12_10_Probe_3A_S29", "BQ12_3_Probe_4A_50_S27", "BQ12_8_Probe_4A_50_S28"))
+Marmoset_pipeSummary <- ProbeTest3_pipeSummary %>% filter(SampleID %in% c("BQ12_10_Probe_3A_S29", "BQ12_3_Probe_4A_50_S27", "BQ12_8_Probe_4A_50_S28")) %>% filter(RawReads >= 1e6)
 Marmoset_pipeSummary <- Marmoset_pipeSummary %>% mutate(Run = "ProbeTest3")
 
 ### BROTH DATA FROM PROBETEST 5 ###
@@ -144,12 +150,11 @@ BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>%
   mutate(Type = case_when(Type == "Week 0 sputum" ~ "Sputum",
                           TRUE ~ Type))
 
-
 # Reorder things
-# NOT DONE YET!
-# All_pipeSummary$Drug <- as.character(All_pipeSummary$Drug)
-# ordered_Drug <- c("Untreated", "RIF")
-# All_pipeSummary$Drug <- factor(All_pipeSummary$Drug, levels = ordered_Drug)
+ordered_Type <- c("Caseum mimic", "Rabbit", "Marmoset", "Sputum", "Broth")
+BiolSamples_pipeSummary$Type <- factor(BiolSamples_pipeSummary$Type, levels = ordered_Type)
+
+
 
 # Already did the below in excel
 # All_pipeSummary$SampleID <- gsub(x = All_pipeSummary$SampleID, pattern = "_S.*", replacement = "") # This regular expression removes the _S and everything after it (I think...)

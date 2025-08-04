@@ -3,6 +3,7 @@
 # 7/31/25
 
 source("Import_data.R") # To get BiolSamples_pipeSummary
+# 8/4/25: Removed all samples with RawReads < 1M (these failed sequencing)
 
 
 # Plot basics
@@ -37,7 +38,7 @@ N_Genomic_box1 <- BiolSamples_pipeSummary %>%
   ggplot(aes(x = Type, y = N_Genomic)) + 
   geom_boxplot(fill="grey", width = 0.4, outlier.size = 0.9, alpha = 0.2) + 
   geom_point(aes(fill = Type), shape = 21, alpha = 0.8, size = 2, position = position_jitter(0.2)) + 
-  # geom_text_repel(aes(label = format(Patient, big.mark = ",")), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
+  # geom_text_repel(aes(label = format(SampleID, big.mark = ",")), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
   scale_fill_manual(values=my_fav_colors) +  
   geom_hline(yintercept = 1000000, linetype = "dashed", alpha = 0.5) + 
   scale_y_continuous(limits = c(0,12000000), breaks = seq(0, 12000000, 2000000)) +
@@ -50,7 +51,7 @@ N_Genomic_box1
 ggsave(N_Genomic_box1,
        file = paste0("N_Genomic_Box1.pdf"),
        path = "Figures/GenomicRead_Analyses",
-       width = 7, height = 5, units = "in")
+       width = 5, height = 5, units = "in")
 
 ## GGERRORPLOT ###
 N_Genomic_errorplot1 <- BiolSamples_pipeSummary %>% 
@@ -91,7 +92,7 @@ P_Genomic_box1
 ggsave(P_Genomic_box1,
        file = paste0("P_Genomic_Box1.pdf"),
        path = "Figures/GenomicRead_Analyses",
-       width = 7, height = 5, units = "in")
+       width = 5, height = 5, units = "in")
 
 
 ###########################################################
@@ -102,11 +103,12 @@ TenReads_box1 <- BiolSamples_pipeSummary %>%
   ggplot(aes(x = Type, y = AtLeast.10.Reads)) + 
   geom_boxplot(fill="grey", width = 0.6, outlier.size = 0.9, alpha = 0.2) + 
   geom_point(aes(fill = Type), shape = 21, alpha = 0.8, size = 2, position = position_jitter(0.2)) + 
+  scale_fill_manual(values=my_fav_colors) +  
   # geom_point(shape = 16, alpha = 0.8, size = 1.5, position = position_jitter(0.2)) + 
   geom_hline(yintercept = 4499*0.8, linetype = "dashed", alpha = 0.5) + 
-  annotate("text", x = 0.7, y = 4499*0.8, label = "80%", hjust = 1, vjust = -0.5, color = "black") + 
+  annotate("text", x = 0.8, y = 4499*0.8, label = "80%", hjust = 1, vjust = -0.5, color = "black") + 
   geom_hline(yintercept = 4499*0.5, linetype = "dashed", alpha = 0.5) + 
-  annotate("text", x = 0.7, y = 4499*0.5, label = "50%", hjust = 1, vjust = -0.5, color = "black") + 
+  annotate("text", x = 0.8, y = 4499*0.5, label = "50%", hjust = 1, vjust = -0.5, color = "black") + 
   labs(title = "Genes with >= 10 reads aligning for all biological sample types",
        # subtitle = "", 
        x = "Sample type", 
@@ -117,4 +119,4 @@ TenReads_box1
 ggsave(TenReads_box1,
        file = paste0("TenReads_box1.pdf"),
        path = "Figures/GenomicRead_Analyses",
-       width = 7, height = 5, units = "in")
+       width = 5, height = 5, units = "in")

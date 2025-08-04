@@ -53,7 +53,7 @@ ScatterCorr <- my_tpm_Log10 %>%
   geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
   labs(title = paste0("Samples AVERAGED: ", Sample1, " vs ", Sample2),
        subtitle = "Pearson correlation; 1e6 Ra THP1 spiked captured VS Broth Not captured (Not scaled)",
-       x = paste0("Log10(TPM+1) Not captured broth samples"),
+       x = paste0("Log10(TPM+1) Uncaptured broth samples"),
        y = paste0("Log10(TPM+1) Captured mixed samples"), ) + 
   stat_cor(method="pearson") + # add a correlation to the plot
   my_plot_themes
@@ -76,7 +76,7 @@ ScatterCorr <- my_tpm_Log10 %>%
   geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
   labs(title = paste0("Samples AVERAGED: ", Sample1, " vs ", Sample2),
        subtitle = "Pearson correlation; 1e6 Ra THP1 spiked captured VS Not captured spiked samples",
-       x = paste0("Log10(TPM+1) Not captured mixed samples"),
+       x = paste0("Log10(TPM+1) Uncaptured mixed samples"),
        y = paste0("Log10(TPM+1) Captured mixed samples"), ) + 
   stat_cor(method="pearson") + # add a correlation to the plot
   my_plot_themes

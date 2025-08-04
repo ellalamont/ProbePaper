@@ -45,7 +45,7 @@ CapturedvsNot_10Reads_Fig1 <- CapturedVsNot_pipeSummary %>%
   labs(title = "ProbeTest5 THP1 cells spiked with H37Ra", 
        subtitle = "Mean with standard deviation", 
        y = "# genes with at least 10 reads aligning") + 
-  scale_x_discrete(labels = c("None" = "Not captured",
+  scale_x_discrete(labels = c("None" = "Uncaptured",
                               "JA2" = "Captured")) + 
   my_plot_themes + theme(axis.title.x = element_blank())
 CapturedvsNot_10Reads_Fig1
@@ -83,7 +83,7 @@ CapturedVsNot_N.Genomic_fig1 <- CapturedVsNot_pipeSummary %>%
        subtitle = NULL, 
        x = NULL, 
        y = "# reads aligning to Mtb transcriptome") + 
-  scale_x_discrete(labels = c("None" = "Not captured",
+  scale_x_discrete(labels = c("None" = "Uncaptured",
                               "JA2" = "Captured")) + 
   my_plot_themes
 CapturedVsNot_N.Genomic_fig1
@@ -105,7 +105,7 @@ CapturedVsNot_P.Genomic_fig1 <- CapturedVsNot_pipeSummary %>%
        subtitle = NULL, 
        x = NULL, 
        y = "% reads aligning to Mtb genome") + 
-  scale_x_discrete(labels = c("None" = "Not captured",
+  scale_x_discrete(labels = c("None" = "Uncaptured",
                               "JA2" = "Captured")) + 
   my_plot_themes
 CapturedVsNot_P.Genomic_fig1
@@ -161,7 +161,7 @@ PieChart_Averages_fig1 <- Averages_CapturedVsNot_pipeSummary %>%
   ggplot(aes(x = "", y = Percent, fill = Percent_Type)) +
   geom_bar(width = 1, stat = "identity", color = "black") + 
   coord_polar(theta = "y", start = 0) + 
-  facet_wrap(~Probe, labeller = as_labeller(c("None" = "Not captured average", "JA2" = "Captured average"))) +
+  facet_wrap(~Probe, labeller = as_labeller(c("None" = "Unaptured average", "JA2" = "Captured average"))) +
   scale_fill_manual(values = c("#00CED1", "#708090", "#E0D8B0")) + 
   geom_text_repel(aes(y = midpoint, label = paste(Percent_Type, "\n", scales::percent(Percent / 100))), size = 4, color = "black", box.padding = 0.3, force = 2, force_pull = 2, min.segment.length = 0.2, segment.size = 0.5) + 
   labs(title = "AVERAGES THP1 cells spiked with 1e6 H37Ra") + 
