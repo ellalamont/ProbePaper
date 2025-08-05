@@ -10,20 +10,20 @@ source("Import_DEG_sets.R")
 # Plot basics
 my_plot_themes <- theme_bw() +
   # theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(legend.position = "right",legend.text=element_text(size=9),
-        legend.title = element_text(size = 10),
+  theme(legend.position = "right",legend.text=element_text(size=7),
+        legend.title = element_text(size = 7),
         # legend.title = element_blank(),
-        plot.title = element_text(size=10), 
-        axis.title.x = element_text(size=10), 
-        axis.text.x = element_text(angle = 0, size=9, vjust=0, hjust=0.5),
-        axis.title.y = element_text(size=10),
-        axis.text.y = element_text(size=8), 
-        plot.subtitle = element_text(size=10), 
-        plot.margin = margin(10, 10, 10, 20)# ,
+        plot.title = element_text(size=7), 
+        axis.title.x = element_text(size=7), 
+        axis.text.x = element_text(angle = 0, size=7, vjust=0, hjust=0.5),
+        axis.title.y = element_text(size=7),
+        axis.text.y = element_text(size=7), 
+        plot.subtitle = element_text(size=7)# , 
+        # plot.margin = margin(10, 10, 10, 20)# ,
   )
 
 facet_themes <- theme(strip.background=element_rect(fill="white", linewidth = 0.9),
-                      strip.text = element_text(size = 8))
+                      strip.text = element_text(size = 7))
 
 ###########################################################
 ######## iMODULONS: COLLECT AND ORGANIZE SAMPLES ##########
@@ -149,10 +149,10 @@ iModulons_bubble_1 <- merged_subset_2 %>%
        y = NULL, x = NULL) + 
   my_plot_themes
 iModulons_bubble_1
-ggsave(iModulons_bubble_1,
-       file = paste0("iModulons_bubble_1.pdf"),
-       path = "Figures/Bubbles/iModulons",
-       width = 8, height = 12, units = "in")
+# ggsave(iModulons_bubble_1,
+#        file = paste0("iModulons_bubble_1.pdf"),
+#        path = "Figures/Bubbles/iModulons",
+#        width = 8, height = 12, units = "in")
 
 
 ###########################################################
@@ -165,14 +165,14 @@ merged_long <- merged_long %>%
     str_detect(PathName, CentralCarbon_iModulons_pattern) ~ "Central Carbon",
     str_detect(PathName, AminoAcid_iModulons_pattern) ~ "Amino Acid",
     str_detect(PathName, NucleicAcid_iModulons_pattern) ~ "Nucleic Acid",
-    str_detect(PathName, FattyAcid.Cholesterol_iModulons_pattern) ~ "Fatty Acid_Cholesterol",
+    str_detect(PathName, FattyAcid.Cholesterol_iModulons_pattern) ~ "Fatty Acid/Cholesterol",
     str_detect(PathName, Metal_iModulons_pattern) ~ "Metal",
-    str_detect(PathName, SulfurMetabolism_iModulons_pattern) ~ "Sulfur Metabolism",
+    str_detect(PathName, SulfurMetabolism_iModulons_pattern) ~ "Sulfur",
     str_detect(PathName, Growth_iModulons_pattern) ~ "Growth",
     str_detect(PathName, Redox_iModulons_pattern) ~ "Redox",
     str_detect(PathName, AcidStress_iModulons_pattern) ~ "Acid Stress",
     str_detect(PathName, Antibiotic_iModulons_pattern) ~ "Antibiotic",
-    str_detect(PathName, Virulence.Persistence_iModulons_pattern) ~ "Virulence_Persistence",
+    str_detect(PathName, Virulence.Persistence_iModulons_pattern) ~ "Virulence/Persistence",
     TRUE ~ "Other"
   ))
 
@@ -194,16 +194,16 @@ BubblePlot_Function <- function(df, title_text = NULL) {
     my_plot_themes
 }
 
-for (cat in unique(na.omit(merged_long$iModulonCategory))) {
-  df_cat <- merged_long %>% filter(iModulonCategory == cat)
-  
-  p <- BubblePlot_Function(df_cat, title_text = paste(cat, " iModulon"))
-  
-  ggsave(p,
-         file = paste0(cat,".pdf"),
-         path = "Figures/Bubbles/iModulons",
-         width = 7.5, height = 6, units = "in")
-  }
+# for (cat in unique(na.omit(merged_long$iModulonCategory))) {
+#   df_cat <- merged_long %>% filter(iModulonCategory == cat)
+#   
+#   p <- BubblePlot_Function(df_cat, title_text = paste(cat, " iModulon"))
+#   
+#   ggsave(p,
+#          file = paste0(cat,".pdf"),
+#          path = "Figures/Bubbles/iModulons",
+#          width = 7.5, height = 6, units = "in")
+#   }
 
 
 
@@ -211,29 +211,38 @@ for (cat in unique(na.omit(merged_long$iModulonCategory))) {
 ###########################################################
 ################# iModulons: FACETED BUBBLES ##############
 
+# Get the most significant in Sputum and have that be the list for all because that's what we really care about
+Fav_Pathways <- SputumVsBroth_iModulons %>% 
+  filter(Sputum_AVG.PVALUE < 0.05) %>%
+  mutate(PathName = str_wrap(PathName, width = 50)) %>%
+  pull(PathName)
+
 # First try make a graph with all the significant for sputum like bubble 1
 merged_subset_2 <- merged_long %>% filter(PathName %in% Fav_Pathways) 
 
 iModulons_bubble_facet <- merged_subset_2 %>%
-  filter(iModulonCategory %in% c("Acid Stress", "Fatty Acid_Cholesterol", "Metal", "Nucleic Acid", "Redox", "Sulfur Metabolism", "Virulence_Persistence")) %>% 
-  mutate(PathName = sub(":.*", "", PathName)) %>%
-  ggplot(aes(x = Type, y = PathName, fill = LOG2FOLD, shape = Type)) + 
-  geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(Significance == "significant", 0.8, 0)), size = 5, alpha = 1) +
+  # filter(iModulonCategory %in% c("Acid Stress", "Fatty Acid/Cholesterol", "Metal", "Nucleic Acid", "Redox", "Sulfur", "Virulence/Persistence")) %>% 
+  filter(iModulonCategory != "Other") %>%
+  filter(N_Genes >=3) %>% 
+  # mutate(PathName = sub(":.*", "", PathName)) %>%
+  mutate(PathName_2 = paste0(PathName, " (n=", N_Genes, ")")) %>%
+  ggplot(aes(x = Type, y = PathName_2, fill = LOG2FOLD, shape = Type)) + 
+  geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(Significance == "significant", 0.8, 0)), size = 4, alpha = 1) +
   scale_shape_manual(values = c(21, 21, 21, 21)) +
   scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
   # facet_col(facets = ~iModulonCategory, scales = "free_y", space = "free") + 
-  facet_wrap(facets = ~iModulonCategory, scales = "free_y", ncol = 2) + 
-  geom_text(aes(x = 0.5, label = paste0("n = ", N_Genes)), hjust = 0, size = 2.5) +
+  # facet_wrap(facets = ~iModulonCategory, scales = "free_y", ncol = 2) + 
+  facet_grid(rows = vars(iModulonCategory), scales = "free_y", space = "free", labeller = labeller(iModulonCategory = label_wrap_gen(width = 10))) + 
   guides(shape = "none") + 
-  labs(title = "All iModulons that are significant in the Sputum",
+  labs(title = "iModulons significant in Sputum (N>=3, Other removed)",
        subtitle = "circles without outlines means not significant",
        y = NULL, x = NULL) + 
   my_plot_themes + facet_themes
 iModulons_bubble_facet
 ggsave(iModulons_bubble_facet,
-       file = paste0("iModulons_bubble_facet_testing2.pdf"),
+       file = paste0("iModulons_bubble_facet_testing3.pdf"),
        path = "Figures/Bubbles/iModulons",
-       width = 10, height = 10, units = "in")
+       width = 5.8, height = 9, units = "in")
 
 
 
@@ -248,21 +257,21 @@ merged_long2 <- merged_long %>%
   ))
 
 
-iModulons_bubble_facet <- merged_long2 %>%
-  filter(Categories2 != "other") %>% 
-  ggplot(aes(x = Type, y = PathName, fill = LOG2FOLD, shape = Type)) +
-  geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(Significance == "significant", 0.8, 0)), size = 6, alpha = 1) +
-  scale_shape_manual(values = c(21, 21, 21, 21)) +
-  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
-  geom_label(aes(x = 0.3, label = paste0("n = ", N_Genes)), hjust = 0, size = 2.7, fill = "white", label.size = NA) +
-  scale_x_discrete(expand = expansion(mult = c(0.1, 0.1))) +
-  guides(shape = "none") +
-  facet_col(facets = ~Categories2, scales = "free_y", space = "free") + 
-  labs(title = "My iModulon subsets",
-       subtitle = "circles without outlines means not significant",
-       y = NULL, x = NULL) +
-  my_plot_themes + facet_themes
-iModulons_bubble_facet
+# iModulons_bubble_facet <- merged_long2 %>%
+#   filter(Categories2 != "other") %>% 
+#   ggplot(aes(x = Type, y = PathName, fill = LOG2FOLD, shape = Type)) +
+#   geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(Significance == "significant", 0.8, 0)), size = 6, alpha = 1) +
+#   scale_shape_manual(values = c(21, 21, 21, 21)) +
+#   scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
+#   geom_label(aes(x = 0.3, label = paste0("n = ", N_Genes)), hjust = 0, size = 2.7, fill = "white", label.size = NA) +
+#   scale_x_discrete(expand = expansion(mult = c(0.1, 0.1))) +
+#   guides(shape = "none") +
+#   facet_col(facets = ~Categories2, scales = "free_y", space = "free") + 
+#   labs(title = "My iModulon subsets",
+#        subtitle = "circles without outlines means not significant",
+#        y = NULL, x = NULL) +
+#   my_plot_themes + facet_themes
+# iModulons_bubble_facet
 
 
 ###########################################################
