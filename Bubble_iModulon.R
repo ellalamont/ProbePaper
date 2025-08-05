@@ -23,7 +23,7 @@ my_plot_themes <- theme_bw() +
   )
 
 facet_themes <- theme(strip.background=element_rect(fill="white", linewidth = 0.9),
-                      strip.text = element_text(size = 9))
+                      strip.text = element_text(size = 8))
 
 ###########################################################
 ######## iMODULONS: COLLECT AND ORGANIZE SAMPLES ##########
@@ -210,6 +210,33 @@ for (cat in unique(na.omit(merged_long$iModulonCategory))) {
 
 ###########################################################
 ################# iModulons: FACETED BUBBLES ##############
+
+# First try make a graph with all the significant for sputum like bubble 1
+merged_subset_2 <- merged_long %>% filter(PathName %in% Fav_Pathways) 
+
+iModulons_bubble_facet <- merged_subset_2 %>%
+  filter(iModulonCategory %in% c("Acid Stress", "Fatty Acid_Cholesterol", "Metal", "Nucleic Acid", "Redox", "Sulfur Metabolism", "Virulence_Persistence")) %>% 
+  mutate(PathName = sub(":.*", "", PathName)) %>%
+  ggplot(aes(x = Type, y = PathName, fill = LOG2FOLD, shape = Type)) + 
+  geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(Significance == "significant", 0.8, 0)), size = 5, alpha = 1) +
+  scale_shape_manual(values = c(21, 21, 21, 21)) +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
+  # facet_col(facets = ~iModulonCategory, scales = "free_y", space = "free") + 
+  facet_wrap(facets = ~iModulonCategory, scales = "free", ncol = 2) + 
+  geom_text(aes(x = 0.5, label = paste0("n = ", N_Genes)), hjust = 0, size = 2.5) +
+  guides(shape = "none") + 
+  labs(title = "All iModulons that are significant in the Sputum",
+       subtitle = "circles without outlines means not significant",
+       y = NULL, x = NULL) + 
+  my_plot_themes + facet_themes
+iModulons_bubble_facet
+ggsave(iModulons_bubble_facet,
+       file = paste0("iModulons_bubble_facet_testing2.pdf"),
+       path = "Figures/Bubbles/iModulons",
+       width = 10, height = 10, units = "in")
+
+
+
 
 # Combining some different things here, but all are the iModulons
 merged_long2 <- merged_long %>% 
