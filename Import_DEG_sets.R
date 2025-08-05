@@ -10,25 +10,45 @@ source("Import_data.R")
 ###########################################################
 ################### IMPORT BOB's DE DATA ##################
 
-# Don't know why these are only working with the full pathname....
 `GoodSputumSubset.ComparedTo.Broth` <- read.delim("Data/Differential_Expression/GoodSputumSubset_vs_Broth/W0.MTb.Meta.JOINED.txt")
 `CaseumMimic.ComparedTo.Broth` <- read.delim("Data/Differential_Expression/CaseumMimic_vs_Broth/CaseumMimic.MTb.Meta.JOINED.txt")
 `Rabbit.ComparedTo.Broth` <- read.delim("Data/Differential_Expression/Rabbit_vs_Broth/Rabbit.MTb.Meta.JOINED.txt")
 `Marmoset.ComparedTo.Broth` <- read.delim("Data/Differential_Expression/Marmoset_vs_Broth/Marmoset.MTb.Meta.JOINED.txt")
 
+# Extras
+`GoodSputumSubset.ComparedTo.CaseumMimic` <- read.delim("Data/Differential_Expression/GoodSputumSubset_vs_CaseumMimic/W0.MTb.Meta.JOINED.txt")
+`GoodSputumSubset.ComparedTo.Rabbit` <- read.delim("Data/Differential_Expression/GoodSputumSubset_vs_Rabbit/W0.MTb.Meta.JOINED.txt")
+`GoodSputumSubset.ComparedTo.Marmoset` <- read.delim("Data/Differential_Expression/GoodSputumSubset_vs_Marmoset/W0.MTb.Meta.JOINED.txt")
+`CaseumMimic.ComparedTo.Rabbit` <- read.delim("Data/Differential_Expression/CaseumMimic_vs_Rabbit/CaseumMimic.MTb.Meta.JOINED.txt")
+`CaseumMimic.ComparedTo.Marmoset` <- read.delim("Data/Differential_Expression/CaseumMimic_vs_Marmoset/CaseumMimic.MTb.Meta.JOINED.txt")
+`Rabbit.ComparedTo.Marmoset` <- read.delim("Data/Differential_Expression/Rabbit_vs_Marmoset/Rabbit.MTb.Meta.JOINED.txt")
 
 ###########################################################
 ################ MAKE A LIST OF ALL DFs ###################
 list_dfs <- list(`GoodSputumSubset.ComparedTo.Broth`,
                  `CaseumMimic.ComparedTo.Broth`, 
                  `Rabbit.ComparedTo.Broth`, 
-                 `Marmoset.ComparedTo.Broth`)
+                 `Marmoset.ComparedTo.Broth`,
+                 
+                 `GoodSputumSubset.ComparedTo.CaseumMimic`,
+                 `GoodSputumSubset.ComparedTo.Rabbit`,
+                 `GoodSputumSubset.ComparedTo.Marmoset`,
+                 `CaseumMimic.ComparedTo.Rabbit`,
+                 `CaseumMimic.ComparedTo.Marmoset`,
+                 `Rabbit.ComparedTo.Marmoset`)
 
 # Make a list of the names
 df_names <- c("GoodSputumSubset.ComparedTo.Broth",
               "CaseumMimic.ComparedTo.Broth", 
               "Rabbit.ComparedTo.Broth", 
-              "Marmoset.ComparedTo.Broth")
+              "Marmoset.ComparedTo.Broth",
+              
+              "GoodSputumSubset.ComparedTo.CaseumMimic",
+              "GoodSputumSubset.ComparedTo.Rabbit",
+              "GoodSputumSubset.ComparedTo.Marmoset",
+              "CaseumMimic.ComparedTo.Rabbit",
+              "CaseumMimic.ComparedTo.Marmoset",
+              "Rabbit.ComparedTo.Marmoset")
 
 # Give the df list the correct df names
 names(list_dfs) <- df_names
