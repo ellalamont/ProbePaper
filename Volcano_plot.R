@@ -3,7 +3,6 @@
 
 source("Import_DEG_sets.R") 
 
-##### NOT DONE YET!!!!!!!
 
 
 # Plot basics
@@ -80,7 +79,7 @@ single_plot
 
 # df_names # Remember I have this
 
-my_path <- "Figures/Volcano_plot/Log2Fold_at_2"
+my_path <- "Figures/Volcano_plot/Log2Fold_at_1"
 
 for (i in 1:length(list_dfs_2)) {
 
@@ -99,7 +98,7 @@ for (i in 1:length(list_dfs_2)) {
 
 
 ###########################################################
-########### FUNCTION FOR VOLCANO WITH LOG2FOLD OF 2 ############
+######### FUNCTION FOR VOLCANO WITH LOG2FOLD OF 2 #########
 
 make_volcano_function_2 <- function(my_df, graph_title) {
   
