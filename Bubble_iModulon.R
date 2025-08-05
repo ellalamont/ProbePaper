@@ -222,7 +222,7 @@ iModulons_bubble_facet <- merged_subset_2 %>%
   scale_shape_manual(values = c(21, 21, 21, 21)) +
   scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
   # facet_col(facets = ~iModulonCategory, scales = "free_y", space = "free") + 
-  facet_wrap(facets = ~iModulonCategory, scales = "free", ncol = 2) + 
+  facet_wrap(facets = ~iModulonCategory, scales = "free_y", ncol = 2) + 
   geom_text(aes(x = 0.5, label = paste0("n = ", N_Genes)), hjust = 0, size = 2.5) +
   guides(shape = "none") + 
   labs(title = "All iModulons that are significant in the Sputum",
