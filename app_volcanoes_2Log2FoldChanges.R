@@ -30,10 +30,11 @@ ui <- fluidPage(
                        choices = df_names,
                        width = "40%"),
            
+           # Add buttons for changing the log2fold threshold
            radioButtons("log2fc_threshold", 
                         label = "log2 fold change threshold", 
-                        choices = c("log2FC > abs(1)" = "1", "log2FC > abs(2)" = "2"),
-                        selected = "1",
+                        choices = c("log2FC > abs(1)" = "1", "log2FC > abs(2)" = "2",  "log2FC > abs(2) AND FDR p-value" = "3"),
+                        selected = "3",
                         inline = TRUE),
           
            
@@ -103,9 +104,22 @@ server <- function(input, output, session) {
     plot_data <- list_dfs_2[[input$my_comparison]]
     
     # Choose DE column and DE_labels column based on selected threshold
-    de_col <- if (input$log2fc_threshold == "1") "DE" else "DE_2"
-    label_col <- if (input$log2fc_threshold == "1") "DE_labels" else "DE_2_labels"
-    log2fc_cutoff <- as.numeric(input$log2fc_threshold)
+    if (input$log2fc_threshold == "1") {
+      de_col <- "DE"
+      label_col <- "DE_labels"
+      p_value <- "AVG_PVALUE"
+      log2fc_cutoff <- 1
+    } else if (input$log2fc_threshold == "2") {
+      de_col <- "DE_2"
+      label_col <- "DE_2_labels"
+      p_value <- "AVG_PVALUE"
+      log2fc_cutoff <- 2
+    } else if (input$log2fc_threshold == "3") {
+      de_col <- "DE2_FDR"
+      label_col <- "DE2_FDR_labels"
+      p_value <- "FDR_PVALUE"
+      log2fc_cutoff <- 2
+    }
     
     # Filter out the Rvnc genes if requested (made new dataframe to plot)
     if (input$FilterOut_Rvnc) {
@@ -116,7 +130,7 @@ server <- function(input, output, session) {
     # Make the Volcano Plot
     my_volcano <- plot_data %>%
       
-      ggplot(aes(x = LOG2FOLD, y = -log10(AVG_PVALUE), 
+      ggplot(aes(x = LOG2FOLD, y = -log10(.data[[p_value]]), 
                  col = .data[[de_col]], label = .data[[label_col]], 
                  text = GENE_ID, label2 = GENE_NAME, label3 = PRODUCT)) + 
       geom_point(alpha = 0.7) + 
@@ -125,10 +139,10 @@ server <- function(input, output, session) {
       geom_point() +
       # Conditionally add the gene set points (yellow) based on checkbox value
       { if(input$show_gene_set) 
-        geom_point(data = gene_set, color = "yellow", aes(col = DE, label = DE_labels, text = GENE_ID))
+        geom_point(data = gene_set, color = "yellow", aes(col = .data[[de_col]], label = .data[[label_col]], text = GENE_ID))
         else 
           NULL } +
-      geom_point(data = single_gene, color = "yellow", aes(col = DE, label = DE_labels, text = GENE_ID)) + 
+      geom_point(data = single_gene, color = "yellow", aes(col = .data[[de_col]], label = .data[[label_col]], text = GENE_ID)) + 
       
       labs(title = input$my_comparison) + 
       geom_vline(xintercept = c(-log2fc_cutoff, log2fc_cutoff), col = "grey", linetype = "dashed") + 

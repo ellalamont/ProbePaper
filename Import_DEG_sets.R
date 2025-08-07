@@ -81,10 +81,20 @@ for (i in 1:length(list_dfs)) {
   
   # Make the column with DE gene names for plotting on graph
   current_df$DE_labels <- ifelse(current_df$DE != "not significant", current_df$GENE_NAME, NA)
-  
   current_df$DE_2_labels <- ifelse(current_df$DE_2 != "not significant", current_df$GENE_NAME, NA)
   
+  # Columns for Log2Fold>abs(2) and FDR corrected p-values
+  current_df$FDR_PVALUE <- p.adjust(current_df$AVG_PVALUE, method = "fdr")
+  current_df$DE2_FDR <- ifelse(current_df$LOG2FOLD < -2 & current_df$FDR_PVALUE < 0.05, "significant down",
+                               ifelse(current_df$LOG2FOLD > 2 & current_df$FDR_PVALUE < 0.05, "significant up", "not significant"))
+  current_df$DE2_FDR <- factor(current_df$DE2_FDR, levels = ordered_DE)
+  current_df$DE2_FDR_labels <- ifelse(current_df$DE2_FDR != "not significant", current_df$GENE_NAME, NA)
+  
+  
   list_dfs_2[[current_df_name]] <- current_df
+  
+  
+  
   
 }
 

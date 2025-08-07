@@ -38,4 +38,39 @@ DEG2count_df <- DEG2count_df %>% mutate(All_Signifiant_DEG2 = `significant down`
 
 ### Move to excel and make the rest by hand!!
 
+###########################################################
+############# LOG2FOLD >=2 AND FDR PVALUE TABLE ###########
+# Make an empty list to hold the count summaries
+DEG2_FDR_count_list <- list()
+
+# Loop through list of dataframes
+for (list_name in names(list_dfs_2)) {
+  
+  # Get the current dataframe
+  df <- list_dfs_2[[list_name]]
+  
+  # Count the DE2_FDR values
+  GeneCounts <- df %>%
+    count(DE2_FDR, name = "Count") %>% # Does the actual counting 
+    pivot_wider(names_from = DE2_FDR, values_from = Count, values_fill = 0)
+  
+  # Add back the name of the current list
+  GeneCounts <- GeneCounts %>%
+    mutate(DEG_Group = list_name) %>%
+    select(DEG_Group, everything()) # Puts list name first
+  
+  # Add the results to my list
+  DEG2_FDR_count_list[[list_name]] <- GeneCounts
+  
+}
+
+# Convert the list of dataframes into one dataframe
+DEG2_FDR_count_df <- bind_rows(DEG2_FDR_count_list)
+
+DEG2_FDR_count_df <- DEG2_FDR_count_df %>% mutate(All_Signifiant_DEG2_FDR = `significant down` + `significant up`)
+
+
+### Move to excel and make the rest by hand!!
+
+
 

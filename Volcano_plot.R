@@ -160,8 +160,7 @@ make_volcano_function_FDR <- function(my_df, graph_title) {
   ## Make a volcano plot using output from Bob's pipeline
   
   my_volcano <- my_df %>%
-    mutate(FDR_PVALUE = p.adjust(AVG_PVALUE, method = "fdr")) %>%
-    ggplot(aes(x = LOG2FOLD, y = -log10(FDR_PVALUE), col = DE_2, label = DE_2_labels, text = GENE_NAME, label2 = GENE_ID)) + # text is for plotly, could be GENE_ID
+    ggplot(aes(x = LOG2FOLD, y = -log10(FDR_PVALUE), col = DE2_FDR, label = DE2_FDR_labels, text = GENE_NAME, label2 = GENE_ID)) + # text is for plotly, could be GENE_ID
     geom_point(alpha = 0.7) + 
     labs(title = graph_title) + 
     geom_vline(xintercept = c(-2,2), col = "grey", linetype = "dashed") + 
@@ -180,8 +179,8 @@ make_volcano_function_FDR <- function(my_df, graph_title) {
   x_min <- min(plot_build$layout$panel_scales_x[[1]]$range$range)
   
   # Add the gene number annotations
-  text_up <- my_df %>% filter(DE_2 == "significant up") %>% nrow()
-  text_down <- my_df %>% filter(DE_2 == "significant down") %>% nrow()
+  text_up <- my_df %>% filter(DE2_FDR == "significant up") %>% nrow()
+  text_down <- my_df %>% filter(DE2_FDR == "significant down") %>% nrow()
   my_volcano_annotated <- my_volcano +
     annotate("label", x = (x_max+1)/2, y = y_max - 0.1, label = paste0(text_up, " genes"), color = "#bb0c00", fontface = "bold", fill = "transparent", label.size = 0.3) + 
     annotate("label", x = (x_min-1)/2, y = y_max - 0.1, label = paste0(text_down, " genes"), color = "#00AFBB", fontface = "bold", fill = "transparent", label.size = 0.3)
@@ -192,7 +191,26 @@ make_volcano_function_FDR <- function(my_df, graph_title) {
 
 single_plot <- make_volcano_function_FDR(list_dfs_2[[1]], df_names[1])
 single_plot
-ggplotly(single_plot)
+# ggplotly(single_plot)
+
+# Loop for all the volcano
+my_path <- "Figures/Volcano_plot/Log2Fold2_FDR"
+for (i in 1:length(list_dfs_2)) {
+  
+  current_df_name <- df_names[i]
+  filename <- paste0(current_df_name, "_FDR.pdf")
+  
+  my_plot <- make_volcano_function_FDR(list_dfs_2[[i]], df_names[i])
+  
+  ggsave(my_plot,
+         file = filename,
+         path = my_path,
+         width = 7, height = 5, units = "in")
+}
+
+
+
+
 ###########################################################
 ############ MAKE VOLCANO WITH YELLOW POINTS ##############
 
