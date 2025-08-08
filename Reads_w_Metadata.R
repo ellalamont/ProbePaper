@@ -18,7 +18,7 @@ my_plot_themes <- theme_bw() +
         axis.title.y = element_text(size=14),
         axis.text.y = element_text(size=14), 
         plot.subtitle = element_text(size=9), 
-        plot.margin = margin(10, 10, 10, 20)# ,
+        plot.margin = margin(2, 2, 2, 2)# Needs to be this for using cowplot later
         # panel.background = element_rect(fill='transparent'),
         # plot.background = element_rect(fill='transparent', color=NA),
         # legend.background = element_rect(fill='transparent'),
@@ -81,12 +81,12 @@ ctVsReads <- merged_metadata %>%
                                  after_stat(rr.label),
                                  after_stat(p.value.label),
                                  sep = "*\", \"*")),
-               label.x = "right", label.y = "top", parse = T)
+               label.x = "left", label.y = "top", parse = T, size = 5)
 ctVsReads # + my_regression_line + my_regression_equations
-ggsave(ctVsReads,
-       file = paste0("Sputum_ctVsReads_1.pdf"),
-       path = "Figures/Reads_w_Metadata",
-       width = 5, height = 5, units = "in")
+# ggsave(ctVsReads,
+#        file = paste0("Sputum_ctVsReads_1.pdf"),
+#        path = "Figures/Reads_w_Metadata",
+#        width = 5, height = 5, units = "in")
 
 
 # P_GENOMIC
@@ -98,7 +98,7 @@ ctVsPercent <- merged_metadata %>%
   # geom_text_repel(aes(label = format(Patient, big.mark = ",")), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
   scale_y_continuous(limits = c(0,100), breaks = seq(0, 100, 10)) +
   scale_x_continuous(limits = c(12,24), breaks = seq(12,24,2), expand = c(0,0)) +
-  labs(title = "Sputum subset: Ct value vs percent reads aligned to Mtb",
+  labs(# title = "Sputum subset: Ct value vs percent reads aligned to Mtb",
        subtitle = NULL,
        y = "% reads aligning to Mtb",
        x = "Xpert Ct value") + 
@@ -108,12 +108,12 @@ ctVsPercent <- merged_metadata %>%
                                  after_stat(rr.label),
                                  after_stat(p.value.label),
                                  sep = "*\", \"*")),
-               label.x = "right", label.y = "top", parse = T)
+               label.x = "left", label.y = 0.99, parse = T, size = 4)
 ctVsPercent # + my_regression_line + my_regression_equations
-ggsave(ctVsPercent,
-       file = paste0("Sputum_ctVsPercent_1.pdf"),
-       path = "Figures/Reads_w_Metadata",
-       width = 5, height = 5, units = "in")
+# ggsave(ctVsPercent,
+#        file = paste0("Sputum_ctVsPercent_1.pdf"),
+#        path = "Figures/Reads_w_Metadata",
+#        width = 5, height = 5, units = "in")
 
 ###########################################################
 ################ SPUTUM N+P GENOMIC TO TTD ################
@@ -138,12 +138,12 @@ ttdVsReads <- merged_metadata %>%
                                  after_stat(rr.label),
                                  after_stat(p.value.label),
                                  sep = "*\", \"*")),
-               label.x = "right", label.y = "top", parse = T)
+               label.x = "left", label.y = "top", parse = T, size = 5)
 ttdVsReads # + my_regression_line + my_regression_equations
-ggsave(ttdVsReads,
-       file = paste0("Sputum_ttdVsReads_1.pdf"),
-       path = "Figures/Reads_w_Metadata",
-       width = 5, height = 5, units = "in")
+# ggsave(ttdVsReads,
+#        file = paste0("Sputum_ttdVsReads_1.pdf"),
+#        path = "Figures/Reads_w_Metadata",
+#        width = 5, height = 5, units = "in")
 
 # P_GENOMIC
 ttdVsPercent <- merged_metadata %>% 
@@ -154,8 +154,8 @@ ttdVsPercent <- merged_metadata %>%
   geom_point(size = 4, alpha = 0.8, stroke = 0.8, color = "black", fill = "#0072B2", shape = 21) + 
   # geom_text_repel(aes(label = format(N_Genomic, big.mark = ",")), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
   scale_y_continuous(limits = c(0,100), breaks = seq(0, 100, 10)) +
-  scale_x_continuous(limits = c(2,6), breaks = seq(2,6,2)) +
-  labs(title = "Sputum subset: TTD vs percent reads aligned to Mtb",
+  scale_x_continuous(limits = c(2,6), breaks = seq(2,6,1)) +
+  labs(# title = "Sputum subset: TTD vs percent reads aligned to Mtb",
        subtitle = NULL,
        y = "% reads aligning to Mtb") + 
   my_plot_themes + 
@@ -164,12 +164,12 @@ ttdVsPercent <- merged_metadata %>%
                                  after_stat(rr.label),
                                  after_stat(p.value.label),
                                  sep = "*\", \"*")),
-               label.x = "right", label.y = "top", parse = T)
+               label.x = "left", label.y = 0.99, parse = T, size = 4)
 ttdVsPercent # + my_regression_line + my_regression_equations
-ggsave(ttdVsPercent,
-       file = paste0("Sputum_ttdVsPercent_2.pdf"),
-       path = "Figures/Reads_w_Metadata",
-       width = 5, height = 5, units = "in")
+# ggsave(ttdVsPercent,
+#        file = paste0("Sputum_ttdVsPercent_2.pdf"),
+#        path = "Figures/Reads_w_Metadata",
+#        width = 5, height = 5, units = "in")
 
 
 ###########################################################
@@ -196,13 +196,13 @@ CFU.Reads <- BiolSamples_pipeSummary %>%
                                  after_stat(rr.label),
                                  after_stat(p.value.label),
                                  sep = "*\", \"*")),
-               label.x = "left", label.y = "top", parse = T) + 
+               label.x = "left", label.y = "top", parse = T, size = 5) + 
   my_plot_themes
 CFU.Reads
-ggsave(CFU.Reads,
-       file = paste0("CFU.Reads_1.pdf"),
-       path = "Figures/Reads_w_Metadata",
-       width = 5, height = 5, units = "in")
+# ggsave(CFU.Reads,
+#        file = paste0("CFU.Reads_1.pdf"),
+#        path = "Figures/Reads_w_Metadata",
+#        width = 5, height = 5, units = "in")
 
 # P_GENOMIC
 CFU.Percent <- BiolSamples_pipeSummary %>% 
@@ -215,19 +215,19 @@ CFU.Percent <- BiolSamples_pipeSummary %>%
   scale_y_continuous(limits = c(0,100), breaks = seq(0, 100, 10)) +
   # scale_x_continuous(limits = c(12,31), breaks = seq(12,31,2), expand = c(0,0)) +
   scale_x_continuous(trans = "log10") + 
-  labs(title = "Marmoset, rabbit, caseum mimic: CFU/g (/mL for mimic) vs percent reads aligned to Mtb",
+  labs(# title = "Marmoset, rabbit, caseum mimic: CFU/g (/mL for mimic) vs percent reads aligned to Mtb",
        # subtitle = "Marmoset data frome ProbeTest3; two rabbits are replicates from same lesion",
-       x = "log10(CFU/g or /mL)", 
+       x = "log10(CFU/g)", 
        y = "% reads aligning to Mtb") + 
   stat_poly_line(method = "lm", se = F, level = 0.95, color = "grey23", alpha = 0.25) + 
   stat_poly_eq(aes(label = paste(after_stat(eq.label),
                                  after_stat(rr.label),
                                  after_stat(p.value.label),
                                  sep = "*\", \"*")),
-               label.x = "left", label.y = "top", parse = T) + 
+               label.x = "left", label.y = 0.99, parse = T, size = 4) + 
   my_plot_themes
 CFU.Percent # + my_regression_line + my_regression_equations
-ggsave(CFU.Percent,
-       file = paste0("CFU.Percent_1.pdf"),
-       path = "Figures/Reads_w_Metadata",
-       width = 5, height = 5, units = "in")
+# ggsave(CFU.Percent,
+#        file = paste0("CFU.Percent_1.pdf"),
+#        path = "Figures/Reads_w_Metadata",
+#        width = 5, height = 5, units = "in")

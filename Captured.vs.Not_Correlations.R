@@ -15,6 +15,7 @@ my_plot_themes <- theme_bw() +
         axis.title.y = element_text(size=14),
         axis.text.y = element_text(size=14), 
         plot.subtitle = element_text(size=9), 
+        plot.margin = margin(2, 2, 2, 2)#
         # plot.margin = margin(10, 10, 10, 20),
         # panel.background = element_rect(fill='transparent'),
         # plot.background = element_rect(fill='transparent', color=NA),
@@ -51,13 +52,14 @@ ScatterCorr <- my_tpm_Log10 %>%
   ggplot(aes(x = .data[[Sample1]], y = .data[[Sample2]])) + 
   geom_point(aes(text = Gene), alpha = 0.7, size = 2, color = "black") +
   geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
-  labs(title = paste0("Samples AVERAGED: ", Sample1, " vs ", Sample2),
-       subtitle = "Pearson correlation; 1e6 Ra THP1 spiked captured VS Broth Not captured (Not scaled)",
+  labs(# title = paste0("Samples AVERAGED: ", Sample1, " vs ", Sample2),
+       # subtitle = "Pearson correlation; 1e6 Ra THP1 spiked captured VS Broth Not captured (Not scaled)",
        x = paste0("Log10(TPM+1) Uncaptured broth samples"),
        y = paste0("Log10(TPM+1) Captured mixed samples"), ) + 
   stat_cor(method="pearson") + # add a correlation to the plot
   my_plot_themes
 ScatterCorr
+ScatterCorr_2D <- ScatterCorr
 # ggplotly(ScatterCorr)
 ggsave(ScatterCorr,
        file = "THP1SpikedCaptured.vs.Broth.pdf",
@@ -74,13 +76,14 @@ ScatterCorr <- my_tpm_Log10 %>%
   ggplot(aes(x = .data[[Sample1]], y = .data[[Sample2]])) + 
   geom_point(aes(text = Gene), alpha = 0.7, size = 2, color = "black") +
   geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
-  labs(title = paste0("Samples AVERAGED: ", Sample1, " vs ", Sample2),
-       subtitle = "Pearson correlation; 1e6 Ra THP1 spiked captured VS Not captured spiked samples",
+  labs(# title = paste0("Samples AVERAGED: ", Sample1, " vs ", Sample2),
+       # subtitle = "Pearson correlation; 1e6 Ra THP1 spiked captured VS Not captured spiked samples",
        x = paste0("Log10(TPM+1) Uncaptured mixed samples"),
        y = paste0("Log10(TPM+1) Captured mixed samples"), ) + 
   stat_cor(method="pearson") + # add a correlation to the plot
   my_plot_themes
 ScatterCorr
+ScatterCorr_2E <- ScatterCorr
 # ggplotly(ScatterCorr)
 ggsave(ScatterCorr,
        file = "THP1SpikedCaptured.vs.NotCaptured_fig1.pdf",

@@ -17,6 +17,7 @@ my_plot_themes <- theme_bw() +
         axis.title.y = element_text(size=14),
         axis.text.y = element_text(size=14), 
         plot.subtitle = element_text(size=9), 
+        plot.margin = margin(2, 2, 2, 2)#
         # plot.margin = margin(10, 10, 10, 20),
         # panel.background = element_rect(fill='transparent'),
         # plot.background = element_rect(fill='transparent', color=NA),
@@ -59,12 +60,13 @@ ScatterCorr <- THP1_Combined_Log10 %>%
   geom_point(aes(text = Gene), alpha = 0.7, size = 2, color = "black") +
   geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
   # geom_text(aes(label = Gene), size = 2, vjust = -0.5, hjust = 0.5, check_overlap = T) +  
-  labs(title = paste0("THP1 ProbeTest 3 vs 4: Not scaled Samples AVERAGED: ", Sample1, " vs ", Sample2),
-       subtitle = "Pearson correlation; 5 samples: THP1 1e6 Ra spiked ",
+  labs(# title = paste0("THP1 ProbeTest 3 vs 4: Not scaled Samples AVERAGED: ", Sample1, " vs ", Sample2),
+       # subtitle = "Pearson correlation; 5 samples: THP1 1e6 Ra spiked ",
        x = paste0("Log10(TPM+1) ProbeTest4 THP1 averaged"), y = paste0("Log10(TPM+1) ProbeTest3 THP1 averaged")) + 
   stat_cor(method="pearson") + # add a correlation to the plot
   my_plot_themes
 ScatterCorr
+ScatterCorr_2F <- ScatterCorr
 # ggplotly(ScatterCorr)
 ggsave(ScatterCorr,
        file = "Averages_THP1.Spiked_CompareAcrossRuns.pdf",

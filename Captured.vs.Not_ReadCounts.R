@@ -15,11 +15,12 @@ my_plot_themes <- theme_bw() +
         axis.title.y = element_text(size=14),
         axis.text.y = element_text(size=14), 
         plot.subtitle = element_text(size=9), 
-        plot.margin = margin(10, 10, 10, 20),
-        panel.background = element_rect(fill='transparent'),
-        plot.background = element_rect(fill='transparent', color=NA),
-        legend.background = element_rect(fill='transparent'),
-        legend.box.background = element_blank()
+        plot.margin = margin(2, 2, 2, 2) #
+        # plot.margin = margin(10, 10, 10, 20),
+        # panel.background = element_rect(fill='transparent'),
+        # plot.background = element_rect(fill='transparent', color=NA),
+        # legend.background = element_rect(fill='transparent'),
+        # legend.box.background = element_blank()
   )
 
 # Stop scientific notation
@@ -42,17 +43,17 @@ CapturedvsNot_10Reads_Fig1 <- CapturedVsNot_pipeSummary %>%
   geom_hline(yintercept = 4499*0.5, linetype = "dashed", alpha = 0.5) + 
   annotate("text", x = 0.6, y = 4499*0.5, label = "50%", 
            hjust = 1.1, vjust = -0.5, color = "black") + 
-  labs(title = "ProbeTest5 THP1 cells spiked with H37Ra", 
-       subtitle = "Mean with standard deviation", 
-       y = "# genes with at least 10 reads aligning") + 
+  labs(# title = "ProbeTest5 THP1 cells spiked with H37Ra", 
+       # subtitle = "Mean with standard deviation", 
+       y = "# genes with >=10 reads aligning") + 
   scale_x_discrete(labels = c("None" = "Uncaptured",
                               "JA2" = "Captured")) + 
   my_plot_themes + theme(axis.title.x = element_blank())
 CapturedvsNot_10Reads_Fig1
-ggsave(CapturedvsNot_10Reads_Fig1,
-       file = "CapturedvsNot_10Reads_Fig1.pdf",
-       path = "Figures/Captured.vs.Not_ReadCounts",
-       width = 6, height = 4, units = "in")
+# ggsave(CapturedvsNot_10Reads_Fig1,
+#        file = "CapturedvsNot_10Reads_Fig1.pdf",
+#        path = "Figures/Captured.vs.Not_ReadCounts",
+#        width = 6, height = 4, units = "in")
 
 
 
@@ -79,18 +80,18 @@ CapturedVsNot_N.Genomic_fig1 <- CapturedVsNot_pipeSummary %>%
   # geom_text_repel(aes(label = format(N_Genomic, big.mark = ",")), size= 3, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
   geom_hline(yintercept = 1000000, linetype = "dashed", alpha = 0.5) + 
   scale_y_continuous(limits = c(0,19000000), breaks = seq(0, 19000000, 2000000)) +
-  labs(title = "THP1 spiked with 1e6 H37Ra",
+  labs(# title = "THP1 spiked with 1e6 H37Ra",
        subtitle = NULL, 
        x = NULL, 
-       y = "# reads aligning to Mtb transcriptome") + 
+       y = "# reads aligning to Mtb") + 
   scale_x_discrete(labels = c("None" = "Uncaptured",
                               "JA2" = "Captured")) + 
   my_plot_themes
 CapturedVsNot_N.Genomic_fig1
-ggsave(CapturedVsNot_N.Genomic_fig1,
-       file = "CapturedVsNot_N.Genomic_fig1.pdf",
-       path = "Figures/Captured.vs.Not_ReadCounts",
-       width = 6, height = 4, units = "in")
+# ggsave(CapturedVsNot_N.Genomic_fig1,
+#        file = "CapturedVsNot_N.Genomic_fig1.pdf",
+#        path = "Figures/Captured.vs.Not_ReadCounts",
+#        width = 6, height = 4, units = "in")
 
 
 ###########################################################
@@ -164,13 +165,13 @@ PieChart_Averages_fig1 <- Averages_CapturedVsNot_pipeSummary %>%
   facet_wrap(~Probe, labeller = as_labeller(c("None" = "Unaptured average", "JA2" = "Captured average"))) +
   scale_fill_manual(values = c("#00CED1", "#708090", "#E0D8B0")) + 
   geom_text_repel(aes(y = midpoint, label = paste(Percent_Type, "\n", scales::percent(Percent / 100))), size = 4, color = "black", box.padding = 0.3, force = 2, force_pull = 2, min.segment.length = 0.2, segment.size = 0.5) + 
-  labs(title = "AVERAGES THP1 cells spiked with 1e6 H37Ra") + 
+  # labs(title = "AVERAGES THP1 cells spiked with 1e6 H37Ra") + 
   my_plot_themes
 PieChart_Averages_fig1
-ggsave(PieChart_Averages_fig1,
-       file = "PieChart_Averages_fig1.pdf",
-       path = "Figures/Captured.vs.Not_ReadCounts",
-       width = 6, height = 4, units = "in")
+# ggsave(PieChart_Averages_fig1,
+#        file = "PieChart_Averages_fig1.pdf",
+#        path = "Figures/Captured.vs.Not_ReadCounts",
+#        width = 6, height = 4, units = "in")
 
 
 
