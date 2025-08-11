@@ -57,12 +57,13 @@ Sample1 <- "ProbeTest4_Averages" # Captured
 Sample2 <- "ProbeTest3_Averages" # Not Captured
 ScatterCorr <- THP1_Combined_Log10 %>% 
   ggplot(aes(x = .data[[Sample1]], y = .data[[Sample2]])) + 
-  geom_point(aes(text = Gene), alpha = 0.7, size = 2, color = "black") +
+  geom_point(aes(text = Gene), alpha = 0.7, size = 0.5, color = "black") +
   geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
   # geom_text(aes(label = Gene), size = 2, vjust = -0.5, hjust = 0.5, check_overlap = T) +  
   labs(# title = paste0("THP1 ProbeTest 3 vs 4: Not scaled Samples AVERAGED: ", Sample1, " vs ", Sample2),
        # subtitle = "Pearson correlation; 5 samples: THP1 1e6 Ra spiked ",
-       x = paste0("Log10(TPM+1) ProbeTest4 THP1 averaged"), y = paste0("Log10(TPM+1) ProbeTest3 THP1 averaged")) + 
+       x = paste0("Log10(TPM+1)\nmixed samples probe A"), 
+       y = paste0("Log10(TPM+1)\nmixed samples probe B")) + 
   stat_cor(method="pearson") + # add a correlation to the plot
   my_plot_themes
 ScatterCorr

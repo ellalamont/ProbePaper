@@ -33,19 +33,24 @@ options(scipen = 0) # To revert back to default
 
 #ggerrroplot
 CapturedvsNot_10Reads_Fig1 <- CapturedVsNot_pipeSummary %>% 
-  # filter(Run == "ProbeTest5") %>% 
-  ggerrorplot(x = "Probe", y = "AtLeast.10.Reads", desc_stat = "mean_sd", error.plot = "errorbar", add = "mean", color = "black") + 
+  mutate(Txn_Coverage = (AtLeast.10.Reads/4499)*100) %>%
+  ggerrorplot(x = "Probe", y = "Txn_Coverage", desc_stat = "mean_sd", error.plot = "errorbar", add = "mean", color = "black", size = 0.4,  # Size of error bars
+              add.params = list(size = 0.4)) +  # Size of mean points
   geom_point(alpha = 0.7, position = position_jitter(width = 0.1, seed = 42), size = 1) + 
-  scale_y_continuous(limits = c(0,4500), breaks = seq(0, 4500, 500)) + 
-  geom_hline(yintercept = 4499*0.8, linetype = "dashed", alpha = 0.5) + 
-  annotate("text", x = 0.6, y = 4499*0.8, label = "80%", 
-           hjust = 1.1, vjust = -0.5, color = "black") + 
-  geom_hline(yintercept = 4499*0.5, linetype = "dashed", alpha = 0.5) + 
-  annotate("text", x = 0.6, y = 4499*0.5, label = "50%", 
-           hjust = 1.1, vjust = -0.5, color = "black") + 
+  # scale_y_continuous(limits = c(0,4500), breaks = seq(0, 4500, 500)) + 
+  scale_y_continuous(limits = c(0,100), breaks = seq(0, 100, 10)) + 
+  geom_hline(yintercept = 80, linetype = "dashed", alpha = 0.5) + 
+  geom_hline(yintercept = 50, linetype = "dashed", alpha = 0.5) + 
+  # geom_hline(yintercept = 4499*0.8, linetype = "dashed", alpha = 0.5) + 
+  # annotate("text", x = 0.6, y = 4499*0.8, label = "80%", 
+  #          hjust = 1, vjust = -0.5, color = "black") + 
+  # geom_hline(yintercept = 4499*0.5, linetype = "dashed", alpha = 0.5) + 
+  # annotate("text", x = 0.6, y = 4499*0.5, label = "50%", 
+  #          hjust = 1, vjust = -0.5, color = "black") + 
   labs(# title = "ProbeTest5 THP1 cells spiked with H37Ra", 
        # subtitle = "Mean with standard deviation", 
-       y = "# genes with >=10 reads aligning") + 
+       # y = "# genes with >=10 reads aligning",
+      y = "% transcriptional coverage") + 
   scale_x_discrete(labels = c("None" = "Uncaptured",
                               "JA2" = "Captured")) + 
   my_plot_themes + theme(axis.title.x = element_blank())
@@ -75,11 +80,12 @@ CapturedvsNot_10Reads_Fig1
 ###################### N_GENOMIC ##########################
 CapturedVsNot_N.Genomic_fig1 <- CapturedVsNot_pipeSummary %>%
   ggplot(aes(x = Probe, y = N_Genomic)) + 
-  geom_point(size = 4, alpha = 0.8, stroke = 0.8, color = "black") + 
+  geom_point(size = 2.5, alpha = 0.8, stroke = 0.8, color = "black") + 
   geom_line(aes(group = Replicates), color = "black", linewidth = 0.5, linetype = "dashed") + 
   # geom_text_repel(aes(label = format(N_Genomic, big.mark = ",")), size= 3, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
   geom_hline(yintercept = 1000000, linetype = "dashed", alpha = 0.5) + 
-  scale_y_continuous(limits = c(0,19000000), breaks = seq(0, 19000000, 2000000)) +
+  # scale_y_continuous(limits = c(0,19000000), breaks = seq(0, 19000000, 2000000)) +
+  scale_y_continuous(limits = c(0,20000000), breaks = seq(0, 20000000, 4000000)) + 
   labs(# title = "THP1 spiked with 1e6 H37Ra",
        subtitle = NULL, 
        x = NULL, 
@@ -130,7 +136,7 @@ my_plot_themes <- theme_void() +
         axis.title.y = element_blank(),
         axis.text.y = element_blank(), 
         plot.subtitle = element_text(size=10), 
-        plot.margin = margin(10, 10, 10, 20),
+        plot.margin = margin(2, 2, 2, 2), #
         panel.background = element_rect(fill='transparent'),
         plot.background = element_rect(fill='transparent', color=NA),
         panel.border = element_blank(), # Remove facet panel borders
@@ -162,7 +168,7 @@ PieChart_Averages_fig1 <- Averages_CapturedVsNot_pipeSummary %>%
   ggplot(aes(x = "", y = Percent, fill = Percent_Type)) +
   geom_bar(width = 1, stat = "identity", color = "black") + 
   coord_polar(theta = "y", start = 0) + 
-  facet_wrap(~Probe, labeller = as_labeller(c("None" = "Unaptured average", "JA2" = "Captured average"))) +
+  facet_wrap(~Probe, labeller = as_labeller(c("None" = "Uncaptured average", "JA2" = "Captured average"))) +
   scale_fill_manual(values = c("#00CED1", "#708090", "#E0D8B0")) + 
   geom_text_repel(aes(y = midpoint, label = paste(Percent_Type, "\n", scales::percent(Percent / 100))), size = 4, color = "black", box.padding = 0.3, force = 2, force_pull = 2, min.segment.length = 0.2, segment.size = 0.5) + 
   # labs(title = "AVERAGES THP1 cells spiked with 1e6 H37Ra") + 

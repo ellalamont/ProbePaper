@@ -101,22 +101,20 @@ P_Genomic_box1
 
 TenReads_box1 <- BiolSamples_pipeSummary %>% 
   filter(Type != "Broth") %>%
-  ggplot(aes(x = Type, y = AtLeast.10.Reads)) + 
+  mutate(Txn_Coverage = (AtLeast.10.Reads/4499)*100) %>%
+  ggplot(aes(x = Type, y = Txn_Coverage)) + 
   geom_boxplot(fill="grey", width = 0.6, outlier.size = 0.9, alpha = 0.2) + 
   geom_point(aes(fill = Type, shape = Type), alpha = 0.8, size = 2, position = position_jitter(0.2)) + 
   scale_shape_manual(values = my_fav_shapes) + 
   scale_fill_manual(values=my_fav_colors) +  
   # geom_text_repel(aes(label = format(SampleID, big.mark = ",")), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
-  # geom_point(shape = 16, alpha = 0.8, size = 1.5, position = position_jitter(0.2)) + 
-  geom_hline(yintercept = 4499*0.8, linetype = "dashed", alpha = 0.5) + 
-  annotate("text", x = 0.8, y = 4499*0.8, label = "80%", hjust = 1, vjust = -0.5, color = "black") + 
-  geom_hline(yintercept = 4499*0.5, linetype = "dashed", alpha = 0.5) + 
-  annotate("text", x = 0.8, y = 4499*0.5, label = "50%", hjust = 1, vjust = -0.5, color = "black") + 
+  scale_y_continuous(limits = c(0,100), breaks = seq(0, 100, 10)) + 
+  geom_hline(yintercept = 80, linetype = "dashed", alpha = 0.5) + 
+  geom_hline(yintercept = 50, linetype = "dashed", alpha = 0.5) + 
   labs(# title = "Genes with >= 10 reads aligning for all biological sample types",
        # subtitle = "", 
        x = "Sample type", 
-       y = "# of genes with >=10 reads aligning") + 
-  scale_y_continuous(limits = c(0,4500), breaks = seq(0, 4500, 500)) + 
+       y = "% transcriptional coverage") + 
   my_plot_themes
 TenReads_box1
 # ggsave(TenReads_box1,
