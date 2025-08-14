@@ -155,14 +155,14 @@ merged_long <- merged_long %>%
     str_detect(PathName, CentralCarbon_iModulons_pattern) ~ "Central Carbon",
     str_detect(PathName, AminoAcid_iModulons_pattern) ~ "Amino Acid",
     str_detect(PathName, NucleicAcid_iModulons_pattern) ~ "Nucleic Acid",
-    str_detect(PathName, FattyAcid.Cholesterol_iModulons_pattern) ~ "Fatty Acid/Cholesterol",
+    str_detect(PathName, FattyAcid.Cholesterol_iModulons_pattern) ~ "Fatty Acid_Cholesterol",
     str_detect(PathName, Metal_iModulons_pattern) ~ "Metal",
     str_detect(PathName, SulfurMetabolism_iModulons_pattern) ~ "Sulfur",
     str_detect(PathName, Growth_iModulons_pattern) ~ "Growth",
     str_detect(PathName, Redox_iModulons_pattern) ~ "Redox",
     str_detect(PathName, AcidStress_iModulons_pattern) ~ "Acid Stress",
     str_detect(PathName, Antibiotic_iModulons_pattern) ~ "Antibiotic",
-    str_detect(PathName, Virulence.Persistence_iModulons_pattern) ~ "Virulence/Persistence",
+    str_detect(PathName, Virulence.Persistence_iModulons_pattern) ~ "Virulence_Persistence",
     TRUE ~ "Other"
   ))
 
@@ -172,7 +172,7 @@ merged_long <- merged_long %>%
 
 BubblePlot_Function <- function(df, title_text = NULL) {
   ggplot(df, aes(x = Type, y = PathName, fill = LOG2FOLD, shape = Type)) + 
-    geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(Significance == "significant", 0.8, 0)), size = 6, alpha = 1) +
+    geom_point(aes(fill = LOG2FOLD, shape = Type, stroke = ifelse(FDR_Significance == "significant", 0.8, 0)), size = 6, alpha = 1) +
     scale_shape_manual(values = c(21, 21, 21, 21)) +
     scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
     geom_label(aes(x = 0.3, label = paste0("n = ", N_Genes)), hjust = 0, size = 2.7, fill = "white", label.size = NA) +
@@ -186,12 +186,12 @@ BubblePlot_Function <- function(df, title_text = NULL) {
 
 # for (cat in unique(na.omit(merged_long$iModulonCategory))) {
 #   df_cat <- merged_long %>% filter(iModulonCategory == cat)
-#   
+# 
 #   p <- BubblePlot_Function(df_cat, title_text = paste(cat, " iModulon"))
-#   
+# 
 #   ggsave(p,
 #          file = paste0(cat,".pdf"),
-#          path = "Figures/Bubbles/iModulons",
+#          path = "Figures/Bubbles/iModulons/FDR",
 #          width = 7.5, height = 6, units = "in")
 #   }
 

@@ -80,6 +80,18 @@ Virulence.Persistence_iModulons <- c("Rv0576", "Mce1R", "SigH", "PhoP", "Mce3R",
 Virulence.Persistence_iModulons_pattern <- str_c(Virulence.Persistence_iModulons, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
 
 
+###########################################################
+################### DOWNLOAD GENE SETS ####################
 
+allGeneSetList$MTb.iModulons
 
+iModulons_df <- as.data.frame(allGeneSetList$MTb.iModulons)  
+write.csv(iModulons_df, file = "iModulons_GeneSets.csv")
+
+iModulons_df <- data.frame(
+  iModulon = names(allGeneSetList$MTb.iModulons),
+  genes = sapply(allGeneSetList$MTb.iModulons, paste, collapse = ", ")
+)
+
+write.csv(iModulons_df, file = "Data/iModulons_GeneSets.csv", row.names = FALSE)
 
