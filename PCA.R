@@ -93,6 +93,42 @@ PCA_3D <- plot_ly(my_PCA_df, x = ~PC1, y = ~PC2, z = ~PC3,
 )
 PCA_3D
 
+
+###########################################################
+############# WHAT GENES IS EACH PC MADE OF ###############
+
+# View(my_PCA$rotation)
+
+My_PCA_rotation <- as.data.frame(my_PCA$rotation) %>%
+  rownames_to_column("Gene")
+
+# Plot the PC rotation values
+PC_to_plot <- "PC1"
+top_n_genes <- 20
+
+# Get the top Gene contributors for the PCA (positive or negative values)
+top_genes_PC1 <- My_PCA_rotation %>%
+  arrange(desc(abs(PC1))) %>%
+  slice(1:50) %>%
+  select(Gene, PC1)
+top_genes_PC2 <- My_PCA_rotation %>%
+  arrange(desc(abs(PC2))) %>%
+  slice(1:50) %>%
+  select(Gene, PC2)
+
+# Add information about the genes 
+load("Data/MTb.MapSet.rda")
+my_geneInfo <- mapSet[["geneMap"]] %>% select(GENE_ID, NAME, PRODUCT)
+top_genes_PC1 <- inner_join(top_genes_PC1 %>% rename(GENE_ID = Gene), 
+                           my_geneInfo, by = "GENE_ID")
+top_genes_PC2 <- inner_join(top_genes_PC2 %>% rename(GENE_ID = Gene), 
+                            my_geneInfo, by = "GENE_ID")
+
+# Save these
+write.csv(top_genes_PC1, "Figures/PCA/TPM_GoodSamples_TopGenes_PC1.csv")
+write.csv(top_genes_PC2, "Figures/PCA/TPM_GoodSamples_TopGenes_PC2.csv")
+
+
 ###########################################################
 ############# PCA BIOL with BROTH FILTERED ################
 # Filtered meaning the Rvnc genes have been removed
