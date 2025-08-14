@@ -252,3 +252,5 @@ All_RawReads <- merge(All_RawReads, ProbeTest5_RawReads_Broth)
 # Just keep the samples passing filter
 GoodBiolSamples_RawReads <- All_RawReads %>% select("X", all_of(GoodSampleList), "H37Ra_Broth_4_S7", "H37Ra_Broth_5_S8", "H37Ra_Broth_6_S9")
 
+# Just keep the sputum samples
+GoodSputumSubset_RawReads <- GoodBiolSamples_RawReads %>% select("X", any_of(SputumSubset_list))
