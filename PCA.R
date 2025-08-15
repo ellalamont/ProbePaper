@@ -10,7 +10,7 @@
 # Two options in base R, prcomp() and princomp()
 # prcomp() is preferred according to the website above
 
-source("Import_data.R") # To get GoodBiolSamples_tpm and BiolSamples_pipeSummary and GoodBiolSamples_tpmF
+source("Import_data.R") # To get GoodBiolSamples_tpm and BiolSamples_pipeSummary and GoodBiolSamples_tpm_f
 
 
 # Plot basics
@@ -131,10 +131,10 @@ write.csv(top_genes_PC2, "Figures/PCA/TPM_GoodSamples_TopGenes_PC2.csv")
 
 ###########################################################
 ############# PCA BIOL with BROTH FILTERED ################
-# Filtered meaning the Rvnc genes have been removed
+# Filtered meaning the non coding genes have been removed
 
 # Convert gene column to rownames
-my_tpm <- GoodBiolSamples_tpmF %>% column_to_rownames(var = "X")
+my_tpm <- GoodBiolSamples_tpm_f # %>% column_to_rownames(var = "X")
 
 # Transform the data
 my_tpm_t <- as.data.frame(t(my_tpm))
@@ -148,9 +148,9 @@ my_PCA <- prcomp(my_tpm_t2, scale = TRUE)
 # See the % Variance explained
 summary(my_PCA)
 summary_PCA <- format(round(as.data.frame(summary(my_PCA)[["importance"]]['Proportion of Variance',]) * 100, digits = 1), nsmall = 1) # format and round used to control the digits after the decimal place
-summary_PCA[1,1] # PC1 explains 34.2% of variance
-summary_PCA[2,1] # PC2 explains 12.5% of variance
-summary_PCA[3,1] # PC3 explains 9.1% of variance
+summary_PCA[1,1] # PC1 explains 34.7% of variance
+summary_PCA[2,1] # PC2 explains 12.6% of variance
+summary_PCA[3,1] # PC3 explains 9.0% of variance
 
 # MAKE PCA PLOT with GGPLOT 
 my_PCA_df <- as.data.frame(my_PCA$x[, 1:3]) # Extract the first 3 PCs
@@ -170,7 +170,7 @@ PCA_tpm_1 <- my_PCA_df %>%
   my_plot_themes
 PCA_tpm_1
 ggsave(PCA_tpm_1,
-       file = paste0("TPM_GoodSamples_Filtered_1.pdf"),
+       file = paste0("TPMf_GoodSamples_1.pdf"),
        path = "Figures/PCA",
        width = 8, height = 5, units = "in")
 

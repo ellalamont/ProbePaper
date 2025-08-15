@@ -221,18 +221,6 @@ All_tpm <- merge(All_tpm, ProbeTest5_tpm_Broth)
 GoodBiolSamples_tpm <- All_tpm %>% select("X", all_of(GoodSampleList))
 
 
-
-###########################################################
-########### FILTER TPM TO REMOVE NON CODING RNA ###########
-
-# Not sure if this is right but will do it for now
-# Removing the Rvncs (non coding RNAs) because I don't think the current probes contain them! (Previous probes have)
-## I think this because they are missing in PredictTB Run 1 THP1 spiked sample but present in that same sample from ProbeTest5
-# The Pathcap people also had issues with ncRNAs: https://www.nature.com/articles/s41598-019-55633-6#Sec8
-
-GoodBiolSamples_tpmF <- GoodBiolSamples_tpm %>% filter(!str_detect(X, regex("Rvnc", ignore_case = T)))
-
-
 ###########################################################
 ############### IMPORT AND PROCESS RAW READS ##############
 
@@ -254,3 +242,23 @@ GoodBiolSamples_RawReads <- All_RawReads %>% select("X", all_of(GoodSampleList),
 
 # Just keep the sputum samples
 GoodSputumSubset_RawReads <- GoodBiolSamples_RawReads %>% select("X", any_of(SputumSubset_list))
+
+
+###########################################################
+######## REMOVE NON-CODING GENES AND CONVERT TO TPM #######
+
+# 8/15/25: After talking to DRS, decided to remove all the non-coding genes and all the MT genes, and leave just the coding genes starting with Rv. So need to remove these at the raw read level and calculate new TPM
+# The Pathcap people also had issues with ncRNAs: https://www.nature.com/articles/s41598-019-55633-6#Sec8
+
+source("Function_CalculateTPM.R")
+
+# Keep only the Rv#* coding genes 
+GoodBiolSamples_RawReads_f <- GoodBiolSamples_RawReads %>% filter(str_detect(X, "^Rv\\d+.*"))
+# Convert all to TPM
+GoodBiolSamples_tpm_f <- CalculateTPM(GoodBiolSamples_RawReads_f)
+
+All_RawReads_f <- All_RawReads %>% filter(str_detect(X, "^Rv\\d+.*"))
+All_tpm_f <- CalculateTPM(All_RawReads_f)
+
+ProbeTest5_RawReads_f <- ProbeTest5_RawReads %>% filter(str_detect(X, "^Rv\\d+.*"))
+ProbeTest5_tpm_f <- CalculateTPM(ProbeTest5_RawReads_f)
