@@ -396,8 +396,39 @@ ggsave(iModulons_newPathways_2,
        path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
        width = 5.8, height = 8.5, units = "in")
 
-
-
+# Changing color of not significant pathways
+iModulons_newPathways_3 <- merged_long2 %>%
+  filter(Type == "Sputum") %>%
+  filter(PathName %in% Fav_Pathways) %>%
+  filter(N_Genes >=3) %>% 
+  mutate(PathName_2 = paste0(PathName, " (n=", N_Genes, ")")) %>%
+  ggplot(aes(x = LOG2FOLD, y = PathName_2, shape = Type)) + 
+  geom_point(aes(stroke = ifelse(FDR_Significance == "significant", 0.8, 0),
+                 fill = ifelse(FDR_Significance == "significant", ifelse(LOG2FOLD>0, "pos", "neg"), "ns")),
+             size = 4, shape = 21, alpha = 0.8) + # FDR adjusted P-values
+  # scale_alpha_manual(values = c("significant" = 1, "not significant" = 0.7)) + 
+  # scale_shape_manual(values = c(21, 21, 21, 21)) +
+  scale_fill_manual(
+    values = c("pos" = "#bb0c00", 
+               "neg" = "#00AFBB", 
+               "ns"  = "grey"),
+    name = "Significance / Direction"
+  ) +
+  # scale_fill_manual(values = c("TRUE" = "#bb0c00", "FALSE" = "#00AFBB")) + 
+  facet_grid(rows = vars(iModulonCategory2), scales = "free_y", space = "free") + 
+  guides(shape = "none") + 
+  scale_x_continuous(limits = c(-2, 4), breaks = seq(-2, 4, 1)) + 
+  geom_vline(xintercept = 0) + 
+  labs(title = "iModulons Sputum only",
+       subtitle = "FDR Adjusted P-values! circles without outlines means not significant",
+       y = NULL, 
+       x = "Log2Fold change") + 
+  my_plot_themes + facet_themes + theme(legend.position = "none")
+iModulons_newPathways_3
+ggsave(iModulons_newPathways_3,
+       file = paste0("Subset_Sputum_2.pdf"),
+       path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
+       width = 5.8, height = 8.5, units = "in")
 
 
 
