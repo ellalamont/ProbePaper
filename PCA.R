@@ -34,8 +34,10 @@ my_plot_themes <- theme_bw() +
 
 # Labelled Colors
 my_fav_colors <- c(`Sputum` = "#0072B2", `Caseum mimic` = "green4", `Broth`= "#999999", `Marmoset` = "#6A3D9A", `Rabbit` = "#E69F00")
+my_fav_colors2 <- c(`Sputum L4` = "#004C73", `Sputum L2` = "#99CCE8", `Caseum mimic` = "green4", `Broth`= "#999999", `Marmoset` = "#6A3D9A", `Rabbit` = "#E69F00") 
 # Labelled Shapes
 my_fav_shapes <- c(`Sputum` = 21, `Caseum mimic` = 22, `Broth`= 23, `Marmoset` = 24, `Rabbit` = 25)
+my_fav_shapes2 <- c(`Sputum L4` = 21, `Sputum L2` = 21, `Caseum mimic` = 22, `Broth`= 23, `Marmoset` = 24, `Rabbit` = 25)
 
 ###########################################################
 ################## PCA BIOL with BROTH ####################
@@ -66,10 +68,11 @@ my_PCA_df <- data.frame(SampleID = row.names(my_PCA_df), my_PCA_df)
 my_PCA_df <- merge(my_PCA_df, BiolSamples_pipeSummary, by = "SampleID", )
 
 PCA_tpm_1 <- my_PCA_df %>% 
-  ggplot(aes(x = PC1, y = PC2, fill = Type, shape = Type)) + 
-  geom_point(aes(fill = Type, shape = Type), size = 5, alpha = 0.7, stroke = 0.8) + 
-  scale_fill_manual(values = my_fav_colors) +  
-  scale_shape_manual(values = my_fav_shapes) + 
+  ggplot(aes(x = PC1, y = PC2, fill = Type3, shape = Type3)) + 
+  geom_point(aes(fill = Type3, shape = Type3), size = 5, alpha = 0.7, stroke = 0.8) +
+  # geom_text_repel(aes(label = Lineage), size = 2.5) + 
+  scale_fill_manual(values = my_fav_colors2) +  
+  scale_shape_manual(values = my_fav_shapes2) + 
   # geom_text_repel(aes(label = Week), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
   labs(title = "PCA: >1M reads and >80% genes with at least 10 reads",
        subtitle = "TPM",
@@ -159,7 +162,8 @@ my_PCA_df <- merge(my_PCA_df, BiolSamples_pipeSummary, by = "SampleID", )
 
 PCA_tpm_1 <- my_PCA_df %>% 
   ggplot(aes(x = PC1, y = PC2, fill = Type, shape = Type)) + 
-  geom_point(aes(fill = Type, shape = Type), size = 5, alpha = 0.7, stroke = 0.8) + 
+  geom_point(aes(fill = Type, shape = Type), size = 5, alpha = 0.7, stroke = 0.8) +
+  geom_text_repel(aes(label = Lineage), size = 2.5, max.overlaps = Inf) + 
   scale_fill_manual(values = my_fav_colors) +  
   scale_shape_manual(values = my_fav_shapes) + 
   # geom_text_repel(aes(label = Week), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
@@ -169,10 +173,11 @@ PCA_tpm_1 <- my_PCA_df %>%
        y = paste0("PC2: ", summary_PCA[2,1], "%")) +
   my_plot_themes
 PCA_tpm_1
-ggsave(PCA_tpm_1,
-       file = paste0("TPMf_GoodSamples_1.pdf"),
-       path = "Figures/PCA",
-       width = 8, height = 5, units = "in")
+# ggsave(PCA_tpm_1,
+#        file = paste0("TPMf_GoodSamples_1.pdf"),
+#        path = "Figures/PCA",
+#        width = 8, height = 5, units = "in")
+# ggplotly(PCA_tpm_1)
 
 
 # 3D plot

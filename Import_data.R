@@ -141,8 +141,10 @@ BiolSamples_pipeSummary <- merge(BiolSamples_pipeSummary, MimicRabbit_pipeSummar
 BiolSamples_pipeSummary <- merge(BiolSamples_pipeSummary, Broth_pipeSummary, all = T)
 
 # Merge two columns
-BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>% mutate(Type = coalesce(Type, Sample_Type)) %>%
+BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>% 
+  mutate(Type = coalesce(Type, Sample_Type)) %>%
   mutate(Type2 = coalesce(Type2, Sample_Type)) %>% 
+  mutate(Type3 = coalesce(Type3, Sample_Type)) %>%
   select(-Sample_Type)
 BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>% mutate(CFU_per_g.or.mL = coalesce(CFU_per_g, CFU_per_mL))
 BiolSamples_pipeSummary$X <- NULL
