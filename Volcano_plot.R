@@ -7,7 +7,7 @@ source("Import_DEG_sets.R")
 
 # Plot basics
 my_plot_themes <- theme_bw() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  # theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(legend.position = "none",legend.text=element_text(size=14),
         legend.title = element_text(size = 14),
         plot.title = element_text(size=10), 
@@ -139,18 +139,18 @@ single_plot
 ggplotly(single_plot)
 
 my_path <- "Figures/Volcano_plot/Log2Fold_at_2"
-for (i in 1:length(list_dfs_2)) {
-  
-  current_df_name <- df_names[i]
-  filename <- paste0(current_df_name, ".pdf")
-  
-  my_plot <- make_volcano_function_2(list_dfs_2[[i]], df_names[i])
-  
-  ggsave(my_plot,
-         file = filename,
-         path = my_path,
-         width = 7, height = 5, units = "in")
-}
+# for (i in 1:length(list_dfs_2)) {
+#   
+#   current_df_name <- df_names[i]
+#   filename <- paste0(current_df_name, ".pdf")
+#   
+#   my_plot <- make_volcano_function_2(list_dfs_2[[i]], df_names[i])
+#   
+#   ggsave(my_plot,
+#          file = filename,
+#          path = my_path,
+#          width = 7, height = 5, units = "in")
+# }
 
 ###########################################################
 ############ FUNCTION FOR VOLCANO FDR CORRECTED ###########
@@ -189,18 +189,18 @@ make_volcano_function_FDR <- function(my_df, graph_title) {
 }
 
 
-single_plot <- make_volcano_function_FDR(list_dfs_2[[1]], df_names[1])
+single_plot <- make_volcano_function_FDR(list_dfs_2[[13]], df_names[13])
 single_plot
 # ggplotly(single_plot)
 
 # Loop for all the volcano
 my_path <- "Figures/Volcano_plot/Log2Fold2_FDR"
-for (i in 1:length(list_dfs_2)) {
+for (i in 1:length(list_dfs_f)) { ## USING FILTERED DATA ##
   
   current_df_name <- df_names[i]
-  filename <- paste0(current_df_name, "_FDR.pdf")
+  filename <- paste0(current_df_name, "_f_FDR.pdf")
   
-  my_plot <- make_volcano_function_FDR(list_dfs_2[[i]], df_names[i])
+  my_plot <- make_volcano_function_FDR(list_dfs_f[[i]], df_names[i]) ## USING FILTERED DATA ##
   
   ggsave(my_plot,
          file = filename,

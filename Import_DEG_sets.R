@@ -23,6 +23,11 @@ source("Import_data.R")
 `CaseumMimic.ComparedTo.Marmoset` <- read.delim("Data/Differential_Expression/CaseumMimic_vs_Marmoset/CaseumMimic.MTb.Meta.JOINED.txt")
 `Rabbit.ComparedTo.Marmoset` <- read.delim("Data/Differential_Expression/Rabbit_vs_Marmoset/Rabbit.MTb.Meta.JOINED.txt")
 
+# Lineage split
+`GoodSputumSubset_L2.ComparedTo.Broth` <- read.delim("Data/Differential_Expression/GoodSputumSubset.L2_vs_Broth/L2.MTb.Meta.JOINED.txt")
+`GoodSputumSubset_L4.ComparedTo.Broth` <- read.delim("Data/Differential_Expression/GoodSputumSubset.L4_vs_Broth/L4.MTb.Meta.JOINED.txt")
+`GoodSputumSubset_L4.ComparedTo.L2` <- read.delim("Data/Differential_Expression/GoodSputumSubset.L2_vs_L4/L4.MTb.Meta.JOINED.txt")
+
 ###########################################################
 ################ MAKE A LIST OF ALL DFs ###################
 list_dfs <- list(`GoodSputumSubset.ComparedTo.Broth`,
@@ -35,7 +40,11 @@ list_dfs <- list(`GoodSputumSubset.ComparedTo.Broth`,
                  `GoodSputumSubset.ComparedTo.Marmoset`,
                  `CaseumMimic.ComparedTo.Rabbit`,
                  `CaseumMimic.ComparedTo.Marmoset`,
-                 `Rabbit.ComparedTo.Marmoset`)
+                 `Rabbit.ComparedTo.Marmoset`,
+                 
+                 `GoodSputumSubset_L2.ComparedTo.Broth`,
+                 `GoodSputumSubset_L4.ComparedTo.Broth`,
+                 `GoodSputumSubset_L4.ComparedTo.L2`)
 
 # Make a list of the names
 df_names <- c("GoodSputumSubset.ComparedTo.Broth",
@@ -48,7 +57,11 @@ df_names <- c("GoodSputumSubset.ComparedTo.Broth",
               "GoodSputumSubset.ComparedTo.Marmoset",
               "CaseumMimic.ComparedTo.Rabbit",
               "CaseumMimic.ComparedTo.Marmoset",
-              "Rabbit.ComparedTo.Marmoset")
+              "Rabbit.ComparedTo.Marmoset",
+              
+              "GoodSputumSubset_L2.ComparedTo.Broth",
+              "GoodSputumSubset_L4.ComparedTo.Broth",
+              "GoodSputumSubset_L4.ComparedTo.L2")
 
 # Give the df list the correct df names
 names(list_dfs) <- df_names
@@ -92,11 +105,16 @@ for (i in 1:length(list_dfs)) {
   
   
   list_dfs_2[[current_df_name]] <- current_df
-  
-  
-  
-  
 }
+
+###########################################################
+################# REMOVE NON-CODING GENES #################
+# 8/15/25: After talking to DRS, decided to remove all the non-coding genes and all the MT genes, and leave just the coding genes starting with Rv. So need to remove these at the raw read level and calculate new TPM
+# The Pathcap people also had issues with ncRNAs: https://www.nature.com/articles/s41598-019-55633-6#Sec8
+
+list_dfs_f <- lapply(list_dfs_2, function(df) {
+  df %>% filter(str_detect(GENE_ID, "^Rv\\d+.*"))
+})
 
 
 
@@ -109,4 +127,7 @@ for (i in 1:length(list_dfs)) {
 `MetaGeneSets_Rabbit.vs.Broth_UP` <- read.delim("Data/Differential_Expression/Rabbit_vs_Broth/Rabbit.MTb.MetaGeneSets.UP.txt")
 `MetaGeneSets_CaseumMimic.vs.Broth_UP` <- read.delim("Data/Differential_Expression/CaseumMimic_vs_Broth/CaseumMimic.MTb.MetaGeneSets.UP.txt")
 
+`MetaGeneSets_GoodSputumSubset_L2.vs.Broth_UP` <- read.delim("Data/Differential_Expression/GoodSputumSubset.L2_vs_Broth/L2.MTb.MetaGeneSets.UP.txt")
+`MetaGeneSets_GoodSputumSubset_L4.vs.Broth_UP` <- read.delim("Data/Differential_Expression/GoodSputumSubset.L4_vs_Broth/L4.MTb.MetaGeneSets.UP.txt")
+`MetaGeneSets_GoodSputumSubset_L4.vs.L2_UP` <- read.delim("Data/Differential_Expression/GoodSputumSubset.L2_vs_L4/L4.MTb.MetaGeneSets.UP.txt")
 

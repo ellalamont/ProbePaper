@@ -90,7 +90,7 @@ ggsave(PCA_tpm_1,
 # https://plotly.com/r/pca-visualization/
 PCA_3D <- plot_ly(my_PCA_df, x = ~PC1, y = ~PC2, z = ~PC3,
                   type = "scatter3d", mode = "markers",
-                  color = ~Type# , 
+                  color = ~Type3# , 
                   # colors = c12,
                   # text = ~Replicate
 )

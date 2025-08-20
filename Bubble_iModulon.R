@@ -431,6 +431,160 @@ ggsave(iModulons_newPathways_3,
        width = 5.8, height = 8.5, units = "in")
 
 
+###########################################################
+##################### SPUTUM L2 AND L4 ####################
+# 8/20/25: Look at differences between lineage 2 and lineage 4 sputum samples
+
+
+L2VsBroth_iModulons <- MetaGeneSets_GoodSputumSubset_L2.vs.Broth_UP %>% 
+  filter(str_detect(PathName, "iModulons")) %>% 
+  filter(!str_detect(PathName, "ISB.Corems")) %>%
+  # filter(LOG2FOLD >= 0) %>% 
+  mutate(PathName = PathName %>%
+           str_replace("iModulons: ", "") %>%
+           str_replace("<.*", "") %>%        # remove anything after <
+           str_remove_all("&nbsp;") %>%      # remove all &nbsp;
+           str_trim())  %>%
+  select(PathName, CellType, N_Genes, LOG2FOLD, AVG_PVALUE, AVG_RANK) %>%
+  mutate(L2_FDR.pvalue  = p.adjust(AVG_PVALUE, method = "fdr")) %>% # Because Bob's pipeline doesn't actually do this...
+  rename("L2_LOG2FOLD" = "LOG2FOLD", "L2_AVG.PVALUE" = "AVG_PVALUE", "L2_AVG.RANK" = "AVG_RANK") %>%
+  mutate()
+
+
+L4VsBroth_iModulons <- MetaGeneSets_GoodSputumSubset_L4.vs.Broth_UP %>% 
+  filter(str_detect(PathName, "iModulons")) %>% 
+  filter(!str_detect(PathName, "ISB.Corems")) %>%
+  # filter(LOG2FOLD >= 0) %>% 
+  mutate(PathName = PathName %>%
+           str_replace("iModulons: ", "") %>%
+           str_replace("<.*", "") %>%        # remove anything after <
+           str_remove_all("&nbsp;") %>%      # remove all &nbsp;
+           str_trim())  %>%
+  select(PathName, CellType, N_Genes, LOG2FOLD, AVG_PVALUE, AVG_RANK) %>%
+  mutate(L4_FDR.pvalue  = p.adjust(AVG_PVALUE, method = "fdr")) %>% # Because Bob's pipeline doesn't actually do this...
+  rename("L4_LOG2FOLD" = "LOG2FOLD", "L4_AVG.PVALUE" = "AVG_PVALUE", "L4_AVG.RANK" = "AVG_RANK") %>%
+  mutate()
+
+# Merge the sputum and the marmoset dataframes
+Lineages_merged_df <- full_join(L2VsBroth_iModulons, L4VsBroth_iModulons, by = c("PathName", "CellType", "N_Genes"))
+
+Lineages_merged_long <- Lineages_merged_df %>%
+  pivot_longer(cols = -c(1:3),
+               names_to = c("Type3", ".value"),
+               names_sep = "_") %>% 
+  mutate(PathName = str_wrap(PathName, width = 50)) %>%
+  mutate(Significance = ifelse(AVG.PVALUE < 0.05, "significant", "not significant")) %>%
+  mutate(FDR_Significance = ifelse(FDR.pvalue < 0.05, "significant", "not significant"))
+
+Lineages_merged_long2 <- Lineages_merged_long %>%
+  mutate(iModulonCategory2 = case_when(
+    str_detect(PathName, paste(Growth_iModulons_pattern, Redox_iModulons_pattern, NucleicAcid_iModulons_pattern, sep = "|")) ~ "Growth",
+    str_detect(PathName, Metal_iModulons_pattern) ~ "Metal",
+    str_detect(PathName, Virulence.Persistence_iModulons_pattern) ~ "Virulence and Persistence",
+    str_detect(PathName, paste(CentralCarbon_iModulons_pattern, FattyAcid.Cholesterol_iModulons_pattern, sep = "|")) ~ "Fatty Acid and Cholesterol",
+    TRUE ~ "Other"
+  ))
+
+# Figure L2 and L4
+Lineages_newPathways <- Lineages_merged_long2 %>%
+  filter(PathName %in% Fav_Pathways) %>%
+  filter(N_Genes >=3) %>% 
+  mutate(PathName_2 = paste0(PathName, " (n=", N_Genes, ")")) %>%
+  ggplot(aes(x = Type3, y = PathName_2, fill = LOG2FOLD)) + 
+  geom_point(aes(fill = LOG2FOLD, stroke = ifelse(FDR_Significance == "significant", 0.8, 0)), size = 4, alpha = 1, shape = 21) + # FDR adjusted P-values
+  # scale_shape_manual(values = c(21, 21, 21, 21)) +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-4.2, 4.2)) +
+  facet_grid(rows = vars(iModulonCategory2), scales = "free_y", space = "free") + 
+  guides(shape = "none") + 
+  labs(title = "iModulons Curated subset",
+       subtitle = "FDR Adjusted P-values! circles without outlines means not significant",
+       y = NULL, x = NULL) + 
+  my_plot_themes + facet_themes
+Lineages_newPathways
+ggsave(Lineages_newPathways,
+       file = paste0("Lineages_v1.pdf"),
+       path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
+       width = 5.8, height = 8.5, units = "in")
+
+
+
+# L2 only
+L2_newPathways <- Lineages_merged_long2 %>%
+  filter(Type3 == "L2") %>%
+  filter(PathName %in% Fav_Pathways) %>%
+  filter(N_Genes >=3) %>% 
+  mutate(PathName_2 = paste0(PathName, " (n=", N_Genes, ")")) %>%
+  ggplot(aes(x = LOG2FOLD, y = PathName_2, shape = Type3)) + 
+  geom_point(aes(stroke = ifelse(FDR_Significance == "significant", 0.8, 0),
+                 fill = ifelse(FDR_Significance == "significant", ifelse(LOG2FOLD>0, "pos", "neg"), "ns")), size = 4, shape = 21, alpha = 0.8) + 
+  scale_fill_manual(values = c("pos" = "#bb0c00", "neg" = "#00AFBB", "ns"  = "grey"), name = "Significance / Direction") +
+  facet_grid(rows = vars(iModulonCategory2), scales = "free_y", space = "free") + 
+  guides(shape = "none") + 
+  scale_x_continuous(limits = c(-3, 4), breaks = seq(-3, 4, 1)) + 
+  geom_vline(xintercept = 0) + 
+  labs(title = "iModulons L2 only",
+       subtitle = "FDR Adjusted P-values! circles without outlines means not significant",
+       y = NULL, 
+       x = "Log2Fold change") + 
+  my_plot_themes + facet_themes + theme(legend.position = "none")
+L2_newPathways
+ggsave(L2_newPathways,
+       file = paste0("L2_v1.pdf"),
+       path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
+       width = 5.8, height = 8.5, units = "in")
+
+# L4 only
+L4_newPathways <- Lineages_merged_long2 %>%
+  filter(Type3 == "L4") %>%
+  filter(PathName %in% Fav_Pathways) %>%
+  filter(N_Genes >=3) %>% 
+  mutate(PathName_2 = paste0(PathName, " (n=", N_Genes, ")")) %>%
+  ggplot(aes(x = LOG2FOLD, y = PathName_2, shape = Type3)) + 
+  geom_point(aes(stroke = ifelse(FDR_Significance == "significant", 0.8, 0),
+                 fill = ifelse(FDR_Significance == "significant", ifelse(LOG2FOLD>0, "pos", "neg"), "ns")), size = 4, shape = 21, alpha = 0.8) + 
+  scale_fill_manual(values = c("pos" = "#bb0c00", "neg" = "#00AFBB", "ns"  = "grey"), name = "Significance / Direction") +
+  facet_grid(rows = vars(iModulonCategory2), scales = "free_y", space = "free") + 
+  guides(shape = "none") + 
+  scale_x_continuous(limits = c(-3, 4.2), breaks = seq(-3, 4.2, 1)) + 
+  geom_vline(xintercept = 0) + 
+  labs(title = "iModulons L4 only",
+       subtitle = "FDR Adjusted P-values! circles without outlines means not significant",
+       y = NULL, 
+       x = "Log2Fold change") + 
+  my_plot_themes + facet_themes + theme(legend.position = "none")
+L4_newPathways
+ggsave(L4_newPathways,
+       file = paste0("L4_v1.pdf"),
+       path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
+       width = 5.8, height = 8.5, units = "in")
+
+# Try lineages together in a different way
+Lineages_newPathways2 <- Lineages_merged_long2 %>%
+  filter(PathName %in% Fav_Pathways) %>%
+  filter(N_Genes >=3) %>% 
+  mutate(PathName_2 = paste0(PathName, " (n=", N_Genes, ")")) %>%
+  ggplot(aes(x = LOG2FOLD, y = PathName_2, shape = Type3)) + 
+  geom_point(aes(stroke = ifelse(FDR_Significance == "significant", 0.8, 0),
+                 fill = ifelse(FDR_Significance == "significant", ifelse(LOG2FOLD>0, "pos", "neg"), "ns"), shape = Type3), size = 4, alpha = 0.8) + 
+  scale_shape_manual(values = c(21, 22)) + 
+  scale_fill_manual(values = c("pos" = "#bb0c00", "neg" = "#00AFBB", "ns"  = "grey"), name = "Significance / Direction") +
+  facet_grid(rows = vars(iModulonCategory2), scales = "free_y", space = "free") + 
+  guides(shape = "none") + 
+  scale_x_continuous(limits = c(-3, 4.2), breaks = seq(-3, 4.2, 1)) + 
+  geom_vline(xintercept = 0) + 
+  labs(title = "iModulons separated by lineage only, L2=Circle, L4=Square",
+       subtitle = "FDR Adjusted P-values! circles without outlines means not significant",
+       y = NULL, 
+       x = "Log2Fold change") + 
+  my_plot_themes + facet_themes + theme(legend.position = "none")
+Lineages_newPathways2
+ggsave(Lineages_newPathways2,
+       file = paste0("Lineages_v2.pdf"),
+       path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
+       width = 5.8, height = 8.5, units = "in")
+
+
+
 
 
 
