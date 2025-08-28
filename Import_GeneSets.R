@@ -93,5 +93,5 @@ iModulons_df <- data.frame(
   genes = sapply(allGeneSetList$MTb.iModulons, paste, collapse = ", ")
 )
 
-# write.csv(iModulons_df, file = "Data/iModulons_GeneSets.csv", row.names = FALSE)
+write.csv(iModulons_df, file = "Data/iModulons_GeneSets_2.csv", row.names = FALSE)
 

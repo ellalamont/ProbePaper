@@ -28,6 +28,10 @@ source("Import_data.R")
 `GoodSputumSubset_L4.ComparedTo.Broth` <- read.delim("Data/Differential_Expression/GoodSputumSubset.L4_vs_Broth/L4.MTb.Meta.JOINED.txt")
 `GoodSputumSubset_L4.ComparedTo.L2` <- read.delim("Data/Differential_Expression/GoodSputumSubset.L2_vs_L4/L4.MTb.Meta.JOINED.txt")
 
+# With Indigo Rv
+`Ra.ComparedTo.Indigo_Rv` <- read.delim("Data/Differential_Expression/Ra_vs_Rv.Indigo/Rv.MTb.Meta.JOINED.txt")
+`GoodSputumSubset.ComparedTo.Indigo_Rv` <- read.delim("Data/Differential_Expression/SputumSubset_vs_Rv.Indigo/W0.MTb.Meta.JOINED.txt")
+
 ###########################################################
 ################ MAKE A LIST OF ALL DFs ###################
 list_dfs <- list(`GoodSputumSubset.ComparedTo.Broth`,
@@ -44,7 +48,10 @@ list_dfs <- list(`GoodSputumSubset.ComparedTo.Broth`,
                  
                  `GoodSputumSubset_L2.ComparedTo.Broth`,
                  `GoodSputumSubset_L4.ComparedTo.Broth`,
-                 `GoodSputumSubset_L4.ComparedTo.L2`)
+                 `GoodSputumSubset_L4.ComparedTo.L2`,
+                 
+                 `Ra.ComparedTo.Indigo_Rv`,
+                 `GoodSputumSubset.ComparedTo.Indigo_Rv`)
 
 # Make a list of the names
 df_names <- c("GoodSputumSubset.ComparedTo.Broth",
@@ -61,7 +68,10 @@ df_names <- c("GoodSputumSubset.ComparedTo.Broth",
               
               "GoodSputumSubset_L2.ComparedTo.Broth",
               "GoodSputumSubset_L4.ComparedTo.Broth",
-              "GoodSputumSubset_L4.ComparedTo.L2")
+              "GoodSputumSubset_L4.ComparedTo.L2",
+              
+              "Ra.ComparedTo.Indigo_Rv",
+              "GoodSputumSubset.ComparedTo.Indigo_Rv")
 
 # Give the df list the correct df names
 names(list_dfs) <- df_names
@@ -131,3 +141,5 @@ list_dfs_f <- lapply(list_dfs_2, function(df) {
 `MetaGeneSets_GoodSputumSubset_L4.vs.Broth_UP` <- read.delim("Data/Differential_Expression/GoodSputumSubset.L4_vs_Broth/L4.MTb.MetaGeneSets.UP.txt")
 `MetaGeneSets_GoodSputumSubset_L4.vs.L2_UP` <- read.delim("Data/Differential_Expression/GoodSputumSubset.L2_vs_L4/L4.MTb.MetaGeneSets.UP.txt")
 
+`MetaGeneSets_Indigo_Rv.vs.Ra_UP` <- read.delim("Data/Differential_Expression/Ra_vs_Rv.Indigo/Rv.MTb.MetaGeneSets.UP.txt")
+`MetaGeneSets_GoodSputumSubset.vs.Indigo_Rv` <- read.delim("Data/Differential_Expression/SputumSubset_vs_Rv.Indigo/W0.MTb.MetaGeneSets.UP.txt")
