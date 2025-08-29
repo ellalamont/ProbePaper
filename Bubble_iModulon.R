@@ -324,6 +324,8 @@ ggsave(iModulons_bubble_facet_FDR,
 ###########################################################
 ############### FDR ADJUSTED SPECIFIC GROUPS ##############
 
+## THIS ONE!!! ###
+
 # 8/18/25: Talked to DRS and there are specific groups of interest we could maybe just include:
 
 # Lipid Metabolism and CCM: PrpR, BkaR, Rv0681, KstR2, Fatty Acid Biosynthesis, FasR, Peptidoglycan Biosynthesis
