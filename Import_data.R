@@ -156,6 +156,14 @@ BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>%
 ordered_Type <- c("Caseum mimic", "Rabbit", "Marmoset", "Sputum", "Broth")
 BiolSamples_pipeSummary$Type <- factor(BiolSamples_pipeSummary$Type, levels = ordered_Type)
 
+# Make metadata for Lance's Rv (8/31/25)
+Lance_metadata <- data.frame(
+  SampleID = c("Rv_pH_7_R1", "Rv_pH_7_R2", "Rv_pH_8.3_R1", "Rv_pH_8.3_R2", "Rv_pH_5.7_R1", "Rv_pH_5.7_R2"), 
+  Type3 = c("Rv7", "Rv7", "Rv8.3", "Rv8.3", "Rv5.7", "Rv5.7"), 
+  Run = c("LanceRun"),stringsAsFactors = FALSE)
+
+# Add it to the pipeSummary
+BiolSamples_pipeSummary_2 <- bind_rows(BiolSamples_pipeSummary, Lance_metadata)
 
 
 # Already did the below in excel
@@ -200,6 +208,10 @@ ProbeTest3_tpm_marm <- ProbeTest3_tpm %>% select(X, BQ12_10_Probe_3A_S29, BQ12_3
 # PROBETEST 4
 ProbeTest4_tpm <- read.csv("Data/ProbeTest4/Mtb.Expression.Gene.Data.TPM.csv")
 
+# LANCE Rv pH7 (8/31/25)
+Lance_tpm <- read.csv("Data/Rv/Rv.LancepH7_Mtb.Expression.Gene.Data.TPM.csv")
+LanceRv_tpm <- Lance_tpm %>% select(X, contains("Rv"))
+LanceRv_pH7_tpm <- LanceRv_tpm %>% select(X, contains("_7_"))
 
 
 # Adjust the names so they are slightly shorter
@@ -221,6 +233,9 @@ All_tpm <- merge(All_tpm, ProbeTest5_tpm_Broth)
 
 # Just keep the samples passing filter
 GoodBiolSamples_tpm <- All_tpm %>% select("X", all_of(GoodSampleList))
+
+# Add Lance's Rv (8/31/25)
+GoodBiolSamples_w_Lance_tpm <- merge(GoodBiolSamples_tpm, LanceRv_tpm)
 
 
 ###########################################################
@@ -244,6 +259,11 @@ GoodBiolSamples_RawReads <- All_RawReads %>% select("X", all_of(GoodSampleList),
 
 # Just keep the sputum samples
 GoodSputumSubset_RawReads <- GoodBiolSamples_RawReads %>% select("X", any_of(SputumSubset_list))
+
+# Add Lance's Rv raw reads
+Lance_RawReads <- read.csv("Data/Rv/LRF_pH_Mtb.Expression.Gene.Data.ReadsM.csv")
+LanceRv_RawReads <- Lance_RawReads %>% select(X, contains("Rv"))
+GoodBiolSamples_wLance_RawReads <- merge(GoodBiolSamples_RawReads, LanceRv_RawReads)
 
 
 ###########################################################
