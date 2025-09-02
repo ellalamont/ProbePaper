@@ -37,17 +37,17 @@ pipeSummary2 <- pipeSummary2 %>%
     Run == "ProbeTest3" ~ 1,
     Run == "ProbeTest5" ~ 2,
     Run == "PredictTB_Run1" ~ 3,
-    Run == "LanceRun" ~ 4
-  ))
+    Run == "LanceRun" ~ 4)) %>%
+  select(SampleID, Type3, Run, Batch)
 
-All_RawReads_2 <- GoodBiolSamples_wLance_RawReads %>%
+All_RawReads_2 <- GoodBiolSamples_wRv_RawReads %>%
   column_to_rownames(var = "X") %>%
   as.matrix()
 
 # Need to make sure the order of the SampleIDs matches
 pipeSummary2 <- pipeSummary2 %>%
-  arrange(match(SampleID, colnames(All_RawReads_2))) %>%
-  slice(1:(n() - 4)) # Remove the last 4 rows which are not passing filter
+  filter(SampleID %in% colnames(All_RawReads_2)) %>%
+  arrange(match(SampleID, colnames(All_RawReads_2)))
 
 
 ###########################################################
@@ -135,10 +135,10 @@ my_PCA_tpm_bc <- prcomp(my_tpm_bc_t, scale = TRUE)
 
 # See the % Variance explained
 summary(my_PCA_tpm_bc)
-summary_PCA_tpm_bc <- format(round(as.data.frame(summary(my_PCA_tpm)[["importance"]]['Proportion of Variance',]) * 100, digits = 1), nsmall = 1) # format and round used to control the digits after the decimal place
-summary_PCA_tpm_bc[1,1] # PC1 explains 32.0% of variance
-summary_PCA_tpm_bc[2,1] # PC2 explains 13.8% of variance
-summary_PCA_tpm_bc[3,1] # PC3 explains 8.5% of variance
+summary_PCA_tpm_bc <- format(round(as.data.frame(summary(my_PCA_tpm_bc)[["importance"]]['Proportion of Variance',]) * 100, digits = 1), nsmall = 1) # format and round used to control the digits after the decimal place
+summary_PCA_tpm_bc[1,1] # PC1 explains 29.4% of variance
+summary_PCA_tpm_bc[2,1] # PC2 explains 11.2% of variance
+summary_PCA_tpm_bc[3,1] # PC3 explains 10.3% of variance
 
 # MAKE PCA PLOT with GGPLOT 
 my_PCA_tpm_bc_df <- as.data.frame(my_PCA_tpm_bc$x[, 1:3]) # Extract the first 3 PCs
@@ -158,7 +158,10 @@ PCA_BatchCorrected <- my_PCA_tpm_bc_df %>%
        y = paste0("PC2: ", summary_PCA_tpm_bc[2,1], "%")) +
   my_plot_themes
 PCA_BatchCorrected
-
+ggsave(PCA_BatchCorrected,
+       file = paste0("BatchCorrected_TPM_wRv.pdf"),
+       path = "Figures_preNonCodingRemoval/PCA/wRv",
+       width = 8, height = 5, units = "in")
 
 
 ###########################################################

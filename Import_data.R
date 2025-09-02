@@ -157,13 +157,18 @@ ordered_Type <- c("Caseum mimic", "Rabbit", "Marmoset", "Sputum", "Broth")
 BiolSamples_pipeSummary$Type <- factor(BiolSamples_pipeSummary$Type, levels = ordered_Type)
 
 # Make metadata for Lance's Rv (8/31/25)
-Lance_metadata <- data.frame(
-  SampleID = c("Rv_pH_7_R1", "Rv_pH_7_R2", "Rv_pH_8.3_R1", "Rv_pH_8.3_R2", "Rv_pH_5.7_R1", "Rv_pH_5.7_R2"), 
-  Type3 = c("Rv7", "Rv7", "Rv8.3", "Rv8.3", "Rv5.7", "Rv5.7"), 
-  Run = c("LanceRun"),stringsAsFactors = FALSE)
+Rv_metadata <- data.frame(
+  SampleID = c("Rv_pH_7_R1", "Rv_pH_7_R2", "Rv_pH_8.3_R1", "Rv_pH_8.3_R2", "Rv_pH_5.7_R1", "Rv_pH_5.7_R2", "INDIGO.NoDrug.Control.E1"), 
+  Type3 = c("Rv7", "Rv7", "Rv8.3", "Rv8.3", "Rv5.7", "Rv5.7", "IndigoRv"), 
+  Run = c("LanceRun", "LanceRun", "LanceRun", "LanceRun", "LanceRun", "LanceRun", "IndigoRun"), stringsAsFactors = FALSE)
+
+NoDrugRv_metadata <- data.frame(
+  SampleID = c(colnames(NoDrugRv_tpm[-1])),
+  Type3 = c("NoDrugRv"), Run = c("NoDrugRun"), stringsAsFactors = FALSE)
 
 # Add it to the pipeSummary
-BiolSamples_pipeSummary_2 <- bind_rows(BiolSamples_pipeSummary, Lance_metadata)
+BiolSamples_pipeSummary_2 <- bind_rows(BiolSamples_pipeSummary, Rv_metadata)
+BiolSamples_pipeSummary_2 <- bind_rows(BiolSamples_pipeSummary_2, NoDrugRv_metadata)
 
 
 # Already did the below in excel
@@ -209,9 +214,16 @@ ProbeTest3_tpm_marm <- ProbeTest3_tpm %>% select(X, BQ12_10_Probe_3A_S29, BQ12_3
 ProbeTest4_tpm <- read.csv("Data/ProbeTest4/Mtb.Expression.Gene.Data.TPM.csv")
 
 # LANCE Rv pH7 (8/31/25)
-Lance_tpm <- read.csv("Data/Rv/Rv.LancepH7_Mtb.Expression.Gene.Data.TPM.csv")
+Lance_tpm <- read.csv("Data/Rv/Rv.LancepH7_Mtb.Expression.Gene.Data.TPM.csv") # These TPMs have been done with the KEEPINTER set to T...
 LanceRv_tpm <- Lance_tpm %>% select(X, contains("Rv"))
 LanceRv_pH7_tpm <- LanceRv_tpm %>% select(X, contains("_7_"))
+
+# INDIGO Rv (9/1/25)
+IndigoRv_tpm <- read.csv("Data/Rv/IndigoRv_Mtb.Expression.Gene.Data.TPM.csv")
+
+# Some other no drug controls I found (9/1/25)
+NoDrugRv_tpm <- read.csv("Data/Rv/NoDrugRv_Mtb.Expression.Gene.Data.TPM.csv")
+
 
 
 # Adjust the names so they are slightly shorter
@@ -234,9 +246,10 @@ All_tpm <- merge(All_tpm, ProbeTest5_tpm_Broth)
 # Just keep the samples passing filter
 GoodBiolSamples_tpm <- All_tpm %>% select("X", all_of(GoodSampleList))
 
-# Add Lance's Rv (8/31/25)
-GoodBiolSamples_w_Lance_tpm <- merge(GoodBiolSamples_tpm, LanceRv_tpm)
-
+# Add Rv (8/31/25)
+GoodBiolSamples_w_Rv_tpm <- merge(GoodBiolSamples_tpm, LanceRv_tpm)
+GoodBiolSamples_w_Rv_tpm <- merge(GoodBiolSamples_w_Rv_tpm, IndigoRv_tpm)
+# GoodBiolSamples_w_Rv_tpm <- merge(GoodBiolSamples_w_Rv_tpm, NoDrugRv_tpm)
 
 ###########################################################
 ############### IMPORT AND PROCESS RAW READS ##############
@@ -260,10 +273,12 @@ GoodBiolSamples_RawReads <- All_RawReads %>% select("X", all_of(GoodSampleList),
 # Just keep the sputum samples
 GoodSputumSubset_RawReads <- GoodBiolSamples_RawReads %>% select("X", any_of(SputumSubset_list))
 
-# Add Lance's Rv raw reads
+# Add Rv raw reads
 Lance_RawReads <- read.csv("Data/Rv/LRF_pH_Mtb.Expression.Gene.Data.ReadsM.csv")
 LanceRv_RawReads <- Lance_RawReads %>% select(X, contains("Rv"))
-GoodBiolSamples_wLance_RawReads <- merge(GoodBiolSamples_RawReads, LanceRv_RawReads)
+# IndigoRv_RawReads <- read.csv("Data/Rv/IndigoRv_Mtb.Expression.Gene.Data.ReadsM.csv") ## THIS ONE IS STILL TPM! It's wrong in the transcript.txt file
+GoodBiolSamples_wRv_RawReads <- merge(GoodBiolSamples_RawReads, LanceRv_RawReads)
+
 
 
 ###########################################################
