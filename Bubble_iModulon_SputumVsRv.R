@@ -18,7 +18,8 @@ my_plot_themes <- theme_bw() +
         # legend.title = element_blank(),
         plot.title = element_text(size=7), 
         axis.title.x = element_text(size=7), 
-        axis.text.x = element_text(angle = 0, size=7, vjust=0, hjust=0.5),
+        # axis.text.x = element_text(angle = 0, size=7, vjust=0, hjust=0.5),
+        axis.text.x = element_text(angle = 45, size=7, vjust=1, hjust=1),
         axis.title.y = element_text(size=7),
         axis.text.y = element_text(size=7), 
         plot.subtitle = element_text(size=7)# , 
@@ -201,4 +202,4 @@ iModulons_newPathways
 ggsave(iModulons_newPathways,
        file = paste0("Sputum_vs_Ra.Rv.pdf"),
        path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
-       width = 8, height = 8.5, units = "in")
+       width = 6.5, height = 8.5, units = "in")
