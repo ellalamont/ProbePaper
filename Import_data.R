@@ -8,23 +8,23 @@ library(ggplot2)
 library(tidyverse)
 library(ggpubr)
 library(RColorBrewer)
-library(knitr)
+# library(knitr)
 library(plotly)
 # library(ggprism) # for add_pvalue()
-library(rstatix) # for adjust_pvalue
-library(ggpmisc) # https://stackoverflow.com/questions/7549694/add-regression-line-equation-and-r2-on-graph
+# library(rstatix) # for adjust_pvalue
+# library(ggpmisc) # https://stackoverflow.com/questions/7549694/add-regression-line-equation-and-r2-on-graph
 library(ggrepel)
 library(pheatmap)
 # library(dendextend) # May need this for looking at pheatmap clustering
-library(ggplotify) # To convert pheatmaps to ggplots
-library(corrplot)
+# library(ggplotify) # To convert pheatmaps to ggplots
+# library(corrplot)
 library(ggcorrplot)
 library(ggfortify) # To make pca plots with plotly
 library(edgeR) # for cpm
 library(sva) # For ComBat_seq batch correction
 # devtools::install_github("NightingaleHealth/ggforestplot")
-library(ggforestplot)
-library(ggforce)
+# library(ggforestplot)
+# library(ggforce)
 
 # DuffyTools
 library(devtools)
@@ -175,6 +175,28 @@ BiolSamples_pipeSummary_2 <- bind_rows(BiolSamples_pipeSummary_2, NoDrugRv_metad
 # All_pipeSummary$SampleID <- gsub(x = All_pipeSummary$SampleID, pattern = "_S.*", replacement = "") # This regular expression removes the _S and everything after it (I think...)
 
 # All_pipeSummary <- All_pipeSummary %>% mutate(Sputum_Number = str_extract(SampleID, "S_[0-9]+"))
+
+###########################################################
+################### SUMMARY STATISTICS ####################
+
+# From CapturedVsNot_pipeSummary
+testSummary <- CapturedVsNot_pipeSummary %>%
+  group_by(Probe) %>%
+  summarize(count = n(),
+            mean_RawReads = mean(RawReads),
+            sd_RawReads = sd(RawReads),
+            mean_N_Genomic = mean(N_Genomic),
+            sd_N_Genomic = sd(N_Genomic),
+            mean_10.reads = mean(AtLeast.10.Reads),
+            sd_10.reads = sd(AtLeast.10.Reads)
+            )
+  
+
+
+
+
+
+
 
 ###########################################################
 ########### LIST OF SAMPLES PASSING INSPECTION ############
