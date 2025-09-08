@@ -158,10 +158,10 @@ PCA_BatchCorrected <- my_PCA_tpm_bc_df %>%
        y = paste0("PC2: ", summary_PCA_tpm_bc[2,1], "%")) +
   my_plot_themes
 PCA_BatchCorrected
-ggsave(PCA_BatchCorrected,
-       file = paste0("BatchCorrected_TPM_wRv.pdf"),
-       path = "Figures_preNonCodingRemoval/PCA/wRv",
-       width = 8, height = 5, units = "in")
+# ggsave(PCA_BatchCorrected,
+#        file = paste0("BatchCorrected_TPM_wRv.pdf"),
+#        path = "Figures_preNonCodingRemoval/PCA/wRv",
+#        width = 8, height = 5, units = "in")
 
 
 ###########################################################

@@ -329,11 +329,11 @@ ggsave(iModulons_bubble_facet_FDR,
 # 8/18/25: Talked to DRS and there are specific groups of interest we could maybe just include:
 
 # Lipid Metabolism and CCM: PrpR, BkaR, Rv0681, KstR2, Fatty Acid Biosynthesis, FasR, Peptidoglycan Biosynthesis
-# Growth: Positive Regulation of Growth, Mycofactocin Synthesis Pathway, Nucleic Acid Hydrolysis, DevR-2, DevR-1
+# Growth: Positive Regulation of Growth, Mycofactocin Synthesis Pathway, DevR-2, DevR-1, GroEL-GroES Complex,
 # Virulence/Persistence: All of them?
 # Metal: Zur, RicR, IdeR
 
-iModulons_of_interest <- c("PrpR", "BkaR", "Rv0681", "KstR2", "Fatty Acid Biosynthesis", "FasR", "Peptidoglycan Biosynthesis", "Positive Regulation of Growth", "Mycofactocin Synthesis Pathway", "Nucleic Acid Hydrolysis", "DevR-2", "DevR-1", "PhoP", "MprA", "Mce3R", "Mce1R", "SigC", "SigD", "SigH", "SigK", "RicR", "IdeR", "Zur") 
+iModulons_of_interest <- c("PrpR", "BkaR", "Rv0681", "KstR2", "Fatty Acid Biosynthesis", "FasR", "Peptidoglycan Biosynthesis", "Positive Regulation of Growth", "Mycofactocin Synthesis Pathway", "DevR-2", "GroEL-GroES Complex", "DevR-1", "PhoP", "MprA", "Mce3R", "Mce1R", "SigC", "SigD", "SigH", "SigK", "RicR", "IdeR", "Zur", "WhiB1") 
 iModulons_of_interest_pattern <- str_c(iModulons_of_interest, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
 
 Fav_Pathways <- merged_long %>% 
@@ -344,15 +344,18 @@ Fav_Pathways <- merged_long %>%
 # Make new column with Groups, from Import_DEG_sets.R
 merged_long2 <- merged_long %>%
   mutate(iModulonCategory2 = case_when(
-    str_detect(PathName, paste(Growth_iModulons_pattern, Redox_iModulons_pattern, NucleicAcid_iModulons_pattern, sep = "|")) ~ "Growth",
+    str_detect(PathName, paste(Growth_iModulons_pattern, Redox_iModulons_pattern, NucleicAcid_iModulons_pattern, AminoAcid_iModulons_pattern, sep = "|")) ~ "Growth",
     str_detect(PathName, Metal_iModulons_pattern) ~ "Metal",
     str_detect(PathName, Virulence.Persistence_iModulons_pattern) ~ "Virulence and Persistence",
     str_detect(PathName, paste(CentralCarbon_iModulons_pattern, FattyAcid.Cholesterol_iModulons_pattern, sep = "|")) ~ "Fatty Acid and Cholesterol",
     TRUE ~ "Other"
   ))
 
+# All sample Types
 iModulons_newPathways <- merged_long2 %>%
   filter(PathName %in% Fav_Pathways) %>%
+  filter(iModulonCategory2 != "Virulence and Persistence") %>% # Removing this because using Ra!!
+  filter(!str_detect(PathName, "WhiB4/IdeR")) %>% # To remove this iModulon which is tagging along with IdeR iModulon
   filter(N_Genes >=3) %>% 
   mutate(PathName_2 = paste0(PathName, " (n=", N_Genes, ")")) %>%
   ggplot(aes(x = Type, y = PathName_2, fill = LOG2FOLD, shape = Type)) + 
@@ -367,41 +370,17 @@ iModulons_newPathways <- merged_long2 %>%
   my_plot_themes + facet_themes
 iModulons_newPathways
 ggsave(iModulons_newPathways,
-       file = paste0("Subset_All_1.pdf"),
+       file = paste0("Subset_All_2.pdf"),
        path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
-       width = 5.8, height = 8.5, units = "in")
+       width = 5.8, height = 6.5, units = "in")
 
 
 ### JUST SPUTUM SAMPLES ###
-iModulons_newPathways_2 <- merged_long2 %>%
-  filter(Type == "Sputum") %>%
-  filter(PathName %in% Fav_Pathways) %>%
-  filter(N_Genes >=3) %>% 
-  mutate(PathName_2 = paste0(PathName, " (n=", N_Genes, ")")) %>%
-  ggplot(aes(x = LOG2FOLD, y = PathName_2, fill = LOG2FOLD>0, shape = Type, alpha = FDR_Significance)) + 
-  geom_point(aes(shape = Type, stroke = ifelse(FDR_Significance == "significant", 0.8, 0)), size = 4) + # FDR adjusted P-values
-  scale_alpha_manual(values = c("significant" = 1, "not significant" = 0.7)) + 
-  scale_shape_manual(values = c(21, 21, 21, 21)) +
-  scale_fill_manual(values = c("TRUE" = "#bb0c00", "FALSE" = "#00AFBB")) + 
-  facet_grid(rows = vars(iModulonCategory2), scales = "free_y", space = "free") + 
-  guides(shape = "none") + 
-  scale_x_continuous(limits = c(-2, 4), breaks = seq(-2, 4, 1)) + 
-  geom_vline(xintercept = 0) + 
-  labs(title = "iModulons Sputum only",
-       subtitle = "FDR Adjusted P-values! circles without outlines means not significant",
-       y = NULL, 
-       x = "Log2Fold change") + 
-  my_plot_themes + facet_themes + theme(legend.position = "none")
-iModulons_newPathways_2
-ggsave(iModulons_newPathways_2,
-       file = paste0("Subset_Sputum_1.pdf"),
-       path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
-       width = 5.8, height = 8.5, units = "in")
-
-# Changing color of not significant pathways
 iModulons_newPathways_3 <- merged_long2 %>%
   filter(Type == "Sputum") %>%
   filter(PathName %in% Fav_Pathways) %>%
+  filter(iModulonCategory2 != "Virulence and Persistence") %>% # Removing this because using Ra!!
+  filter(!str_detect(PathName, "WhiB4/IdeR")) %>% # To remove this iModulon which is tagging along with IdeR iModulon
   filter(N_Genes >=3) %>% 
   mutate(PathName_2 = paste0(PathName, " (n=", N_Genes, ")")) %>%
   ggplot(aes(x = LOG2FOLD, y = PathName_2, shape = Type)) + 
@@ -428,9 +407,9 @@ iModulons_newPathways_3 <- merged_long2 %>%
   my_plot_themes + facet_themes + theme(legend.position = "none")
 iModulons_newPathways_3
 ggsave(iModulons_newPathways_3,
-       file = paste0("Subset_Sputum_2.pdf"),
+       file = paste0("Subset_Sputum_3.pdf"),
        path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
-       width = 5.8, height = 8.5, units = "in")
+       width = 5.8, height = 6.5, units = "in")
 
 
 ###########################################################
