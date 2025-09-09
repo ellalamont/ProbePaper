@@ -62,17 +62,17 @@ ScatterCorr <- THP1_Combined_Log10 %>%
   # geom_text(aes(label = Gene), size = 2, vjust = -0.5, hjust = 0.5, check_overlap = T) +  
   labs(# title = paste0("THP1 ProbeTest 3 vs 4: Not scaled Samples AVERAGED: ", Sample1, " vs ", Sample2),
        # subtitle = "Pearson correlation; 5 samples: THP1 1e6 Ra spiked ",
-       x = paste0("Log10(TPM+1)\nmixed samples probe A"), 
-       y = paste0("Log10(TPM+1)\nmixed samples probe B")) + 
+       x = paste0("Log10(TPM+1)\nMixed samples probe A"), 
+       y = paste0("Log10(TPM+1)\nMixed samples probe B")) + 
   stat_cor(method="pearson") + # add a correlation to the plot
   my_plot_themes
 ScatterCorr
 ScatterCorr_2F <- ScatterCorr
 # ggplotly(ScatterCorr)
-ggsave(ScatterCorr,
-       file = "Averages_THP1.Spiked_CompareAcrossRuns.pdf",
-       path = "Figures/Comparing_across_Runs",
-       width = 7, height = 5, units = "in")
+# ggsave(ScatterCorr,
+#        file = "Averages_THP1.Spiked_CompareAcrossRuns.pdf",
+#        path = "Figures/Comparing_across_Runs",
+#        width = 7, height = 5, units = "in")
 
 
 ###########################################################
@@ -108,10 +108,10 @@ ScatterCorr <- W0_Combined_Log10 %>%
   my_plot_themes
 ScatterCorr
 # ggplotly(ScatterCorr)
-ggsave(ScatterCorr,
-       file = "Sputum_W0.250754_CompareAcrossRuns.pdf",
-       path = "Figures/Comparing_across_Runs",
-       width = 7, height = 5, units = "in")
+# ggsave(ScatterCorr,
+#        file = "Sputum_W0.250754_CompareAcrossRuns.pdf",
+#        path = "Figures/Comparing_across_Runs",
+#        width = 7, height = 5, units = "in")
 
 
 

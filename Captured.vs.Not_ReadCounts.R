@@ -116,10 +116,10 @@ CapturedVsNot_P.Genomic_fig1 <- CapturedVsNot_pipeSummary %>%
                               "JA2" = "Captured")) + 
   my_plot_themes
 CapturedVsNot_P.Genomic_fig1
-ggsave(CapturedVsNot_P.Genomic_fig1,
-       file = "CapturedVsNot_P.Genomic_fig1.pdf",
-       path = "Figures/Captured.vs.Not_ReadCounts",
-       width = 6, height = 4, units = "in")
+# ggsave(CapturedVsNot_P.Genomic_fig1,
+#        file = "CapturedVsNot_P.Genomic_fig1.pdf",
+#        path = "Figures/Captured.vs.Not_ReadCounts",
+#        width = 6, height = 4, units = "in")
 
 
 ###########################################################
