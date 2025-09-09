@@ -10,17 +10,27 @@ library(cowplot)
 source("Captured.vs.Not_Correlations.R") # ScatterCorr_2D, ScatterCorr_2E
 source("Comparing_across_Runs.R") # ScatterCorr_2F
 source("Captured.vs.Not_ReadCounts.R") # PieChart_Averages_fig1, CapturedVsNot_N.Genomic_fig1, CapturedvsNot_10Reads_Fig1
-source("Limit_of_Detection.R") # LimitofDetect_NumReads_Fig1, LimitofDetect_PercentReads_Fig1, LimitofDetect_10Reads_Fig1
+source("Limit_of_Detection.R") # LimitofDetect_NumReads_Fig1, LimitofDetect_PercentReads_Fig1, LimitofDetect_10Reads_Fig1, LimitofDetect_ScatterCorr
 
-combined <- plot_grid(PieChart_Averages_fig1, CapturedVsNot_N.Genomic_fig1, CapturedvsNot_10Reads_Fig1, ScatterCorr_2D, ScatterCorr_2E, ScatterCorr_2F, LimitofDetect_NumReads_Fig1, LimitofDetect_PercentReads_Fig1, LimitofDetect_10Reads_Fig1, ncol = 3, nrow = 3, axis = "tblr", align = "hv", rel_widths = c(1, 1, 1), rel_heights = c(1, 1))
+# combined <- plot_grid(PieChart_Averages_fig1, CapturedVsNot_N.Genomic_fig1, CapturedvsNot_10Reads_Fig1, ScatterCorr_2D, ScatterCorr_2E, ScatterCorr_2F, LimitofDetect_NumReads_Fig1, LimitofDetect_PercentReads_Fig1, LimitofDetect_10Reads_Fig1, ncol = 3, nrow = 3, axis = "tblr", align = "hv", rel_widths = c(1, 1, 1), rel_heights = c(1, 1))
+
+combined <- plot_grid(PieChart_Averages_fig1, CapturedVsNot_N.Genomic_fig1, CapturedvsNot_10Reads_Fig1,
+                      LimitofDetect_NumReads_Fig1, LimitofDetect_PercentReads_Fig1, LimitofDetect_10Reads_Fig1,
+                      LimitofDetect_ScatterCorr, ScatterCorr_2E, ScatterCorr_2F, 
+                      ncol = 3, nrow = 3, axis = "tblr", align = "hv", rel_widths = c(1, 1, 1), rel_heights = c(1, 1))
+
 combined
+# ggsave(combined,
+#        file = paste0("Figure2_v2.pdf"),
+#        path = "Figures/CombinedFigures",
+#        width = 15, height = 10, units = "in")
+# ggsave(combined,
+#        file = paste0("Figure2_v3.pdf"),
+#        path = "Figures/CombinedFigures",
+#        width = 15, height = 12, units = "in")
 ggsave(combined,
-       file = paste0("Figure2_v2.pdf"),
-       path = "Figures/CombinedFigures",
-       width = 15, height = 10, units = "in")
-ggsave(combined,
-       file = paste0("Figure2_v3.pdf"),
-       path = "Figures/CombinedFigures",
+       file = paste0("Figure2_v5.pdf"),
+       path = "Figures_preNonCodingRemoval/CombinedFigures",
        width = 15, height = 12, units = "in")
 
 ###########################################################
