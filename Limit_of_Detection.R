@@ -2,6 +2,8 @@
 # E. Lamont
 # 7/31/25
 
+# 9/8/25: Looking at correlation between the lower burden samples
+
 source("Import_data.R") # to get LimitofDetect_pipeSummary
 
 
@@ -92,9 +94,85 @@ LimitofDetect_10Reads_Fig1
 #        width = 7, height = 5, units = "in")
 
 
+###########################################################
+##################### CORRELATIONS ########################
 
+# Start with the TPM ProbeTest5_tpm
+# Grab just the samples I want
+LimitofDetect_tpm <- ProbeTest5_tpm %>%
+  select("X", all_of(LimitofDetect_pipeSummary$SampleID)) %>%
+  rename("Gene" = "X")
 
+names(LimitofDetect_tpm) <- gsub(x = names(LimitofDetect_tpm), pattern = "_S.*", replacement = "")
 
+### Log10 transform ###
+LimitofDetect_tpm_Log10 <- LimitofDetect_tpm %>% 
+  mutate(across(where(is.numeric), ~ .x + 1)) %>% # Add 1 to all the values
+  mutate(across(where(is.numeric), ~ log10(.x))) # Log transform the values
 
+### Add averages columns ###
+LimitofDetect_tpm_Log10 <- LimitofDetect_tpm_Log10 %>% 
+  mutate(
+    AVERAGE_1e6 = rowMeans(select(., c(THP1_1e6_1a, THP1_1e6_2b, THP1_1e6_3a)), na.rm = TRUE),
+    AVERAGE_1e5 = rowMeans(select(., c(THP1_1e5_1, THP1_1e5_2, THP1_1e5_3)), na.rm = TRUE),
+    AVERAGE_1e4 = rowMeans(select(., c(THP1_1e4_1, THP1_1e4_2, THP1_1e4_3)), na.rm = TRUE),
+    AVERAGE_1e3 = rowMeans(select(., c(THP1_1e3_1, THP1_1e3_2, THP1_1e3_3, THP1_1e3_4)), na.rm = TRUE),
+    AVERAGE_1e2 = rowMeans(select(., c(THP1_1e2_1, THP1_1e2_2, THP1_1e2_3, THP1_1e2_4)), na.rm = TRUE),
+  )
 
+###################################################################
+############################## 1e2 VS 1e6 #########################
 
+Sample1 <- "AVERAGE_1e2" # Broth Not Captured
+Sample2 <- "AVERAGE_1e6" # THP1 spiked Captured
+ScatterCorr <- LimitofDetect_tpm_Log10 %>% 
+  ggplot(aes(x = .data[[Sample1]], y = .data[[Sample2]])) + 
+  geom_point(aes(text = Gene), alpha = 0.7, size = 0.5, color = "black") +
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
+  labs(# title = paste0("Samples AVERAGED: ", Sample1, " vs ", Sample2),
+    # subtitle = "Pearson correlation; 1e6 Ra THP1 spiked captured VS Broth Not captured (Not scaled)",
+    x = paste0("Log10(TPM+1)\n1e2 Mtb cells"),
+    y = paste0("Log10(TPM+1)\n1e6 Mtb cells"), ) + 
+  stat_cor(method="pearson") + # add a correlation to the plot
+  my_plot_themes
+ScatterCorr
+LimitofDetect_ScatterCorr <- ScatterCorr
+# ggsave(ScatterCorr,
+#        file = "1e2.vs.1e6_Correlation.pdf",
+#        path = "Figures_preNonCodingRemoval/Limit_of_Detection",
+#        width = 7, height = 5, units = "in")
+
+###########################################################
+################# PEARSON LOG10 GGCORRPLOT ################
+
+# Make the correlation
+LimitofDetect_tpm_Log10_AVG <- LimitofDetect_tpm_Log10 %>% 
+  select("Gene", contains("AVERAGE")) %>%
+  column_to_rownames("Gene")
+corr <- cor(LimitofDetect_tpm_Log10_AVG, method = "pearson")
+
+# Compute a matrix of correlation p-values
+p.mat <- cor_pmat(LimitofDetect_tpm_Log10_AVG)
+# head(p.mat[, 1:4])
+
+min(corr) # 0.1863461
+my_min <- round(min(corr), 1)
+
+# Plot pearson
+ggcorrplot_PearsonLog10 <- corr %>% 
+  ggcorrplot(hc.order = F, 
+             method = "square", 
+             lab = TRUE, lab_size = 4,
+             type = c("lower"),
+             outline.col = "white") + 
+  # scale_fill_gradient2(limit = c(my_min,1), low = "blue", high =  "red", mid = "white", midpoint = (((1-my_min)/2)+my_min)) + # Make sure to change based on the min!
+  my_plot_themes + 
+  scale_x_discrete(guide = guide_axis(angle = 45)) + 
+  labs(title = "Pearson Correlation Log10(TPM+1)", 
+       subtitle = NULL, 
+       fill = "Correlation")
+ggcorrplot_PearsonLog10
+# ggsave(ggcorrplot_PearsonLog10,
+#        file = "LimitofDetect_PearsonCorrelation.pdf",
+#        path = "Figures_preNonCodingRemoval/Limit_of_Detection",
+#        width = 7, height = 5, units = "in")
