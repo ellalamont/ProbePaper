@@ -18,8 +18,8 @@ my_plot_themes <- theme_bw() +
         # legend.title = element_blank(),
         plot.title = element_text(size=7), 
         axis.title.x = element_text(size=7), 
-        # axis.text.x = element_text(angle = 0, size=7, vjust=0, hjust=0.5),
-        axis.text.x = element_text(angle = 45, size=7, vjust=1, hjust=1),
+        axis.text.x = element_text(angle = 0, size=7, vjust=0, hjust=0.5),
+        # axis.text.x = element_text(angle = 45, size=7, vjust=1, hjust=1),
         axis.title.y = element_text(size=7),
         axis.text.y = element_text(size=7), 
         plot.subtitle = element_text(size=7)# , 
@@ -166,7 +166,7 @@ merged_long <- merged_long %>%
 # Virulence/Persistence: All of them?
 # Metal: Zur, RicR, IdeR
 
-iModulons_of_interest <- c("PrpR", "BkaR", "Rv0681", "KstR2", "Fatty Acid Biosynthesis", "FasR", "Peptidoglycan Biosynthesis", "Positive Regulation of Growth", "Mycofactocin Synthesis Pathway", "Nucleic Acid Hydrolysis", "DevR-2", "DevR-1", "PhoP", "MprA", "Mce3R", "Mce1R", "SigC", "SigD", "SigH", "SigK", "RicR", "IdeR", "Zur") 
+iModulons_of_interest <- c("PrpR", "BkaR", "Rv0681", "KstR2", "Fatty Acid Biosynthesis", "FasR", "Peptidoglycan Biosynthesis", "Positive Regulation of Growth", "Mycofactocin Synthesis Pathway", "DevR-2", "GroEL-GroES Complex", "DevR-1", "PhoP", "MprA", "Mce3R", "Mce1R", "SigC", "SigD", "SigH", "SigK", "RicR", "IdeR", "Zur", "WhiB1") 
 iModulons_of_interest_pattern <- str_c(iModulons_of_interest, collapse = "|") # Collapse all the things I am interested in into a pattern separated by or
 
 Fav_Pathways <- merged_long %>% 
@@ -177,12 +177,13 @@ Fav_Pathways <- merged_long %>%
 # Make new column with Groups, from Import_DEG_sets.R
 merged_long2 <- merged_long %>%
   mutate(iModulonCategory2 = case_when(
-    str_detect(PathName, paste(Growth_iModulons_pattern, Redox_iModulons_pattern, NucleicAcid_iModulons_pattern, sep = "|")) ~ "Growth",
+    str_detect(PathName, paste(Growth_iModulons_pattern, Redox_iModulons_pattern, NucleicAcid_iModulons_pattern, AminoAcid_iModulons_pattern, sep = "|")) ~ "Growth",
     str_detect(PathName, Metal_iModulons_pattern) ~ "Metal",
     str_detect(PathName, Virulence.Persistence_iModulons_pattern) ~ "Virulence and Persistence",
     str_detect(PathName, paste(CentralCarbon_iModulons_pattern, FattyAcid.Cholesterol_iModulons_pattern, sep = "|")) ~ "Fatty Acid and Cholesterol",
     TRUE ~ "Other"
   ))
+
 
 iModulons_newPathways <- merged_long2 %>%
   filter(PathName %in% Fav_Pathways) %>%
@@ -199,7 +200,50 @@ iModulons_newPathways <- merged_long2 %>%
        y = NULL, x = NULL) + 
   my_plot_themes + facet_themes
 iModulons_newPathways
-ggsave(iModulons_newPathways,
-       file = paste0("Sputum_vs_Ra.Rv.pdf"),
+# ggsave(iModulons_newPathways,
+#        file = paste0("Sputum_vs_Ra.Rv.pdf"),
+#        path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
+#        width = 6.5, height = 8.5, units = "in")
+
+
+###########################################################
+################# JUST LANCE Rv VS SPUTUM #################
+
+iModulons_SputumVsLanceRv <- merged_long2 %>%
+  filter(Type == "Sputum.LancepH7Rv") %>%
+  filter(PathName %in% Fav_Pathways) %>%
+  # filter(iModulonCategory2 != "Virulence and Persistence") %>% # Removing this because using Ra!!
+  filter(!str_detect(PathName, "WhiB4/IdeR")) %>% # To remove this iModulon which is tagging along with IdeR iModulon
+  filter(N_Genes.y >=3) %>% 
+  mutate(PathName_2 = paste0(PathName, " (n=", N_Genes.y, ")")) %>%
+  ggplot(aes(x = LOG2FOLD, y = PathName_2, shape = Type)) + 
+  geom_point(aes(stroke = ifelse(FDR_Significance == "significant", 0.8, 0),
+                 fill = ifelse(FDR_Significance == "significant", ifelse(LOG2FOLD>0, "pos", "neg"), "ns")),
+             size = 4, shape = 21, alpha = 0.8) + # FDR adjusted P-values
+  # scale_alpha_manual(values = c("significant" = 1, "not significant" = 0.7)) + 
+  # scale_shape_manual(values = c(21, 21, 21, 21)) +
+  scale_fill_manual(
+    values = c("pos" = "#bb0c00", 
+               "neg" = "#00AFBB", 
+               "ns"  = "grey"),
+    name = "Significance / Direction"
+  ) +
+  # scale_fill_manual(values = c("TRUE" = "#bb0c00", "FALSE" = "#00AFBB")) + 
+  facet_grid(rows = vars(iModulonCategory2), scales = "free_y", space = "free") + 
+  guides(shape = "none") + 
+  # scale_x_continuous(limits = c(-2, 4), breaks = seq(-2, 4, 1)) + 
+  geom_vline(xintercept = 0) + 
+  labs(title = "iModulons Sputum only vs LanceRv7",
+       subtitle = "FDR Adjusted P-values! circles without outlines means not significant",
+       y = NULL, 
+       x = "Log2Fold change") + 
+  my_plot_themes + facet_themes + theme(legend.position = "none")
+iModulons_SputumVsLanceRv
+ggsave(iModulons_SputumVsLanceRv,
+       file = paste0("Sputum_vs_LanceRv.pdf"),
        path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
        width = 6.5, height = 8.5, units = "in")
+
+
+
+
