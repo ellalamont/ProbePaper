@@ -177,12 +177,14 @@ Fav_Pathways <- merged_long %>%
 # Make new column with Groups, from Import_DEG_sets.R
 merged_long2 <- merged_long %>%
   mutate(iModulonCategory2 = case_when(
-    str_detect(PathName, paste(Growth_iModulons_pattern, Redox_iModulons_pattern, NucleicAcid_iModulons_pattern, AminoAcid_iModulons_pattern, sep = "|")) ~ "Growth",
+    str_detect(PathName, "DevR") ~ "DosR", # specifically putt the DevR in a different category (normally in redox)
+    str_detect(PathName, paste(Growth_iModulons_pattern, NucleicAcid_iModulons_pattern, Redox_iModulons_pattern, AminoAcid_iModulons_pattern, sep = "|")) ~ "Growth",
     str_detect(PathName, Metal_iModulons_pattern) ~ "Metal",
     str_detect(PathName, Virulence.Persistence_iModulons_pattern) ~ "Virulence and Persistence",
     str_detect(PathName, paste(CentralCarbon_iModulons_pattern, FattyAcid.Cholesterol_iModulons_pattern, sep = "|")) ~ "Fatty Acid and Cholesterol",
     TRUE ~ "Other"
-  ))
+  )) %>%
+  mutate(iModulonCategory2 = factor(iModulonCategory2, levels = c("Fatty Acid and Cholesterol", "Growth", "DosR", "Metal","Virulence and Persistence", "Other")))
 
 
 iModulons_newPathways <- merged_long2 %>%
@@ -239,10 +241,10 @@ iModulons_SputumVsLanceRv <- merged_long2 %>%
        x = "Log2Fold change") + 
   my_plot_themes + facet_themes + theme(legend.position = "none")
 iModulons_SputumVsLanceRv
-ggsave(iModulons_SputumVsLanceRv,
-       file = paste0("Sputum_vs_LanceRv.pdf"),
-       path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
-       width = 6.5, height = 8.5, units = "in")
+# ggsave(iModulons_SputumVsLanceRv,
+#        file = paste0("Sputum_vs_LanceRv.pdf"),
+#        path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
+#        width = 6.5, height = 8.5, units = "in")
 
 
 

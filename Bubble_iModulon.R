@@ -224,10 +224,10 @@ iModulons_bubble_facet <- merged_subset_2 %>%
        y = NULL, x = NULL) + 
   my_plot_themes + facet_themes
 iModulons_bubble_facet
-ggsave(iModulons_bubble_facet,
-       file = paste0("iModulons_bubble_facet_testing3.pdf"),
-       path = "Figures/Bubbles/iModulons",
-       width = 5.8, height = 9, units = "in")
+# ggsave(iModulons_bubble_facet,
+#        file = paste0("iModulons_bubble_facet_testing3.pdf"),
+#        path = "Figures/Bubbles/iModulons",
+#        width = 5.8, height = 9, units = "in")
 
 
 
@@ -344,12 +344,15 @@ Fav_Pathways <- merged_long %>%
 # Make new column with Groups, from Import_DEG_sets.R
 merged_long2 <- merged_long %>%
   mutate(iModulonCategory2 = case_when(
-    str_detect(PathName, paste(Growth_iModulons_pattern, Redox_iModulons_pattern, NucleicAcid_iModulons_pattern, AminoAcid_iModulons_pattern, sep = "|")) ~ "Growth",
+    str_detect(PathName, "DevR") ~ "DosR", # specifically putt the DevR in a different category (normally in redox)
+    str_detect(PathName, paste(Growth_iModulons_pattern, NucleicAcid_iModulons_pattern, Redox_iModulons_pattern, AminoAcid_iModulons_pattern, sep = "|")) ~ "Growth",
     str_detect(PathName, Metal_iModulons_pattern) ~ "Metal",
     str_detect(PathName, Virulence.Persistence_iModulons_pattern) ~ "Virulence and Persistence",
     str_detect(PathName, paste(CentralCarbon_iModulons_pattern, FattyAcid.Cholesterol_iModulons_pattern, sep = "|")) ~ "Fatty Acid and Cholesterol",
     TRUE ~ "Other"
-  ))
+  )) %>%
+  mutate(iModulonCategory2 = factor(iModulonCategory2, levels = c("Fatty Acid and Cholesterol", "Growth", "DosR", "Metal","Virulence and Persistence", "Other")))
+  
 
 # All sample Types
 iModulons_newPathways <- merged_long2 %>%
@@ -369,12 +372,12 @@ iModulons_newPathways <- merged_long2 %>%
        y = NULL, x = NULL) + 
   my_plot_themes + facet_themes
 iModulons_newPathways
-ggsave(iModulons_newPathways,
-       file = paste0("Subset_All_2.pdf"),
-       path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
-       width = 5.8, height = 6.5, units = "in")
+# ggsave(iModulons_newPathways,
+#        file = paste0("Subset_All_2.pdf"),
+#        path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
+#        width = 5.8, height = 6.5, units = "in")
 
-
+## THIS ONE!!! ##
 ### JUST SPUTUM SAMPLES ###
 iModulons_newPathways_3 <- merged_long2 %>%
   filter(Type == "Sputum") %>%
@@ -407,7 +410,7 @@ iModulons_newPathways_3 <- merged_long2 %>%
   my_plot_themes + facet_themes + theme(legend.position = "none")
 iModulons_newPathways_3
 ggsave(iModulons_newPathways_3,
-       file = paste0("Subset_Sputum_3.pdf"),
+       file = paste0("Subset_Sputum_4.pdf"),
        path = "Figures_preNonCodingRemoval/Bubbles/iModulons/FDR",
        width = 5.8, height = 6.5, units = "in")
 
