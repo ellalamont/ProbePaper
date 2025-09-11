@@ -62,8 +62,8 @@ ScatterCorr <- THP1_Combined_Log10 %>%
   # geom_text(aes(label = Gene), size = 2, vjust = -0.5, hjust = 0.5, check_overlap = T) +  
   labs(# title = paste0("THP1 ProbeTest 3 vs 4: Not scaled Samples AVERAGED: ", Sample1, " vs ", Sample2),
        # subtitle = "Pearson correlation; 5 samples: THP1 1e6 Ra spiked ",
-       x = paste0("Log10(TPM+1)\nMixed samples probe A"), 
-       y = paste0("Log10(TPM+1)\nMixed samples probe B")) + 
+       x = paste0("Log10(TPM+1)\nSpiked samples probe A"), 
+       y = paste0("Log10(TPM+1)\nSpiked samples probe B")) + 
   stat_cor(method="pearson") + # add a correlation to the plot
   my_plot_themes
 ScatterCorr
