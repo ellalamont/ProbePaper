@@ -190,13 +190,6 @@ testSummary <- CapturedVsNot_pipeSummary %>%
             mean_10.reads = mean(AtLeast.10.Reads),
             sd_10.reads = sd(AtLeast.10.Reads)
             )
-  
-
-
-
-
-
-
 
 ###########################################################
 ########### LIST OF SAMPLES PASSING INSPECTION ############

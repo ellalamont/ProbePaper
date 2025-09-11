@@ -136,6 +136,7 @@ ScatterCorr <- LimitofDetect_tpm_Log10 %>%
   stat_cor(method="pearson") + # add a correlation to the plot
   my_plot_themes
 ScatterCorr
+ggplotly(ScatterCorr)
 LimitofDetect_ScatterCorr <- ScatterCorr
 # ggsave(ScatterCorr,
 #        file = "1e2.vs.1e6_Correlation.pdf",
