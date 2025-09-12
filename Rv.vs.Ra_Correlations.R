@@ -26,8 +26,7 @@ my_plot_themes <- theme_bw() +
   )
 
 ###########################################################
-####################### PROCESS DATA ######################
-
+##################### BC: PROCESS DATA ####################
 
 my_tpm <- my_tpm_bc %>% rownames_to_column("Gene")
 names(my_tpm) <- gsub(x = names(my_tpm), pattern = "_S.*", replacement = "")
@@ -47,7 +46,7 @@ my_tpm_Log10 <- my_tpm_Log10 %>%
 
 
 ###################################################################
-############################ Ra VS Rv #############################
+########################## BC: Ra VS Rv ###########################
 
 Sample1 <- "AVERAGE_Ra" # Broth Not Captured
 Sample2 <- "AVERAGE_Rv" # THP1 spiked Captured
@@ -56,13 +55,51 @@ ScatterCorr <- my_tpm_Log10 %>%
   geom_point(aes(text = Gene), alpha = 0.7, size = 0.5, color = "black") +
   geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
   labs(title = paste0("Samples AVERAGED: ", Sample1, " vs ", Sample2),
-    subtitle = "Pearson correlation",
+    subtitle = "BATCH Corrected Pearson correlation",
     x = paste0("Log10(TPM+1) Ra"),
     y = paste0("Log10(TPM+1) Rv pH7"), ) + 
   stat_cor(method="pearson") + # add a correlation to the plot
   my_plot_themes
 ScatterCorr
-ggplotly(ScatterCorr)
+ggsave(ScatterCorr,
+       file = "Ra.vs.LanceRvpH7_BatchCorrected.pdf",
+       path = "Figures_preNonCodingRemoval/Ra.vs.Rv",
+       width = 7, height = 5, units = "in")
+
+
+###########################################################
+############## CORRELATION NOT BATCH CORRECTED ############
+
+# 9/11/25
+# GoodBiolSamples_w_Rv_tpm
+
+# Log10 transform the data
+my_tpm_Log10 <- GoodBiolSamples_w_Rv_tpm %>% 
+  # mutate(Gene = rownames(my_tpm)) %>%
+  mutate(across(where(is.numeric), ~ .x + 1)) %>% # Add 1 to all the values
+  mutate(across(where(is.numeric), ~ log10(.x))) # Log transform the values
+
+# Get the averages of the samples I want (Sputum, Marm, Rabbit, caseum, Lance's pH7 Rv)
+my_data <- my_tpm_Log10 %>%
+  mutate(
+    AVERAGE_pH7Rv = rowMeans(select(., c(Rv_pH_7_R1, Rv_pH_7_R2)), na.rm = TRUE),
+    AVERAGE_Ra = rowMeans(select(., c(H37Ra_Broth_4_S7, H37Ra_Broth_5_S8, H37Ra_Broth_6_S9)), na.rm = TRUE),
+  ) %>%
+  select(X, AVERAGE_pH7Rv, AVERAGE_Ra)
+
+Sample1 <- "AVERAGE_Ra" # Broth Not Captured
+Sample2 <- "AVERAGE_pH7Rv" # THP1 spiked Captured
+ScatterCorr <- my_data %>% 
+  ggplot(aes(x = .data[[Sample1]], y = .data[[Sample2]])) + 
+  geom_point(aes(text = X), alpha = 0.7, size = 0.5, color = "black") +
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
+  labs(title = paste0("Samples AVERAGED: ", Sample1, " vs ", Sample2),
+       subtitle = "NOT batch corrected Pearson correlation",
+       x = paste0("Log10(TPM+1) Ra"),
+       y = paste0("Log10(TPM+1) Rv pH7"), ) + 
+  stat_cor(method="pearson") + # add a correlation to the plot
+  my_plot_themes
+ScatterCorr
 ggsave(ScatterCorr,
        file = "Ra.vs.LanceRvpH7.pdf",
        path = "Figures_preNonCodingRemoval/Ra.vs.Rv",
