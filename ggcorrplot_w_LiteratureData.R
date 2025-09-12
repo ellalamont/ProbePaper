@@ -77,10 +77,17 @@ corr <- cor(All_RankExpression_noNA, method = "spearman")
 p.mat <- cor_pmat(All_RankExpression_noNA, method = "spearman")
 # head(p.mat[, 1:4])
 
+p.mat.adj <- p.mat %>%
+  as.vector() %>% 
+  p.adjust(method = "fdr") %>%
+  matrix(nrow = nrow(p.mat), ncol = ncol(p.mat))
+rownames(p.mat.adj) <- rownames(p.mat)
+colnames(p.mat.adj) <- colnames(p.mat)
+
 # Plot
 ggcorrplot_Spearman_noNA <- corr %>% 
   ggcorrplot(hc.order = F, 
-             p.mat = p.mat,
+             p.mat = p.mat.adj,
              lab = TRUE, lab_size = 6,
              type = c("lower"),
              # colors = c("#1B86B4", "white", "#AC204B"),
