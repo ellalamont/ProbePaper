@@ -57,6 +57,9 @@ pipeSummary2 <- pipeSummary2 %>%
 
 batch <- pipeSummary2$Batch # Check this and make sure it is in the correct order!!
 counts_corrected <- ComBat_seq(All_RawReads_2, batch = batch)
+Corrected_test <- ComBat_seq(counts = All_RawReads_2, 
+                             batch = pipeSummary2$Batch,
+                             group = pipeSummary2$Type3)
 
 
 ###########################################################
