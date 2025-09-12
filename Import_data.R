@@ -168,7 +168,7 @@ NoDrugRv_metadata <- data.frame(
 
 # Add it to the pipeSummary
 BiolSamples_pipeSummary_2 <- bind_rows(BiolSamples_pipeSummary, Rv_metadata)
-BiolSamples_pipeSummary_2 <- bind_rows(BiolSamples_pipeSummary_2, NoDrugRv_metadata)
+# BiolSamples_pipeSummary_2 <- bind_rows(BiolSamples_pipeSummary_2, NoDrugRv_metadata)
 
 
 # Already did the below in excel
