@@ -134,6 +134,10 @@ LimitofDetect_pipeSummary <- ProbeTest5_pipeSummary %>%
 # Should maybe go back and remove all the 1e6 cells that are not specifically for the limit of detection, but not doing that right now.
 # Or what might be easier is just include the samples from ProbeTest5, where I have at least 3 replicates each! 
 
+# THP1 CONTROL FROM PROBE TEST 5
+THP1_Control_pipeSummary <- ProbeTest5_pipeSummary %>% 
+  filter(SampleID %in% )
+
 
 ### MERGE the pipeSummaries for Biological Samples ###
 BiolSamples_pipeSummary <- merge(SputumSubset_pipeSummary, Marmoset_pipeSummary, all = T)
