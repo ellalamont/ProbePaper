@@ -161,7 +161,38 @@ ggsave(ScatterCorr,
        path = "Figures/Captured.vs.Not_Correlations",
        width = 7, height = 5, units = "in")
 
+###################################################################
+############## THP1Spiked CAPTURED VS THP1 CONTROL ################
+# 9/15/25
 
+temp_merged <- merge(ProbeTest5_tpm_CapturedVsNot_wBroth, ProbeTest5_tpm_THP1Control)
+my_tpm <- temp_merged %>% rename("Gene" = "X")
+names(my_tpm) <- gsub(x = names(my_tpm), pattern = "_S.*", replacement = "")
+### Log10 transform ###
+my_tpm_Log10 <- my_tpm %>% 
+  mutate(across(where(is.numeric), ~ .x + 1)) %>% # Add 1 to all the values
+  mutate(across(where(is.numeric), ~ log10(.x))) # Log transform the values
+### Add averages columns ###
+my_tpm_Log10 <- my_tpm_Log10 %>% 
+  mutate(
+    AVERAGE_THP1Spiked = rowMeans(select(., c(THP1_1e6_1a, THP1_1e6_2b, THP1_1e6_3a)), na.rm = TRUE),
+    AVERAGE_THP1Spiked_NotCaptured = rowMeans(select(., c(THP1_1e6_1b, THP1_1e6_2a, THP1_1e6_3b)), na.rm = TRUE),
+    AVERAGE_BrothNotCaptured = rowMeans(select(., c(H37Ra_Broth_4, H37Ra_Broth_5, H37Ra_Broth_6)), na.rm = TRUE),
+    AVERAGE_THP1Control = rowMeans(select(., c(THP1_Control_2, THP1_Control_3, THP1_Control_4)), na.rm = TRUE)) # Sample 1 removed because it was contaminated
+
+Sample1 <- "AVERAGE_THP1Control" # Broth Not Captured
+Sample2 <- "AVERAGE_THP1Spiked" # THP1 spiked Captured
+ScatterCorr <- my_tpm_Log10 %>% 
+  ggplot(aes(x = .data[[Sample1]], y = .data[[Sample2]])) + 
+  geom_point(aes(text = Gene), alpha = 0.7, size = 0.5, color = "black") +
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
+  labs(# title = paste0("Samples AVERAGED: ", Sample1, " vs ", Sample2),
+    # subtitle = "Pearson correlation; 1e6 Ra THP1 spiked captured VS Not captured spiked samples",
+    x = paste0("Log10(TPM+1)\n", Sample1),
+    y = paste0("Log10(TPM+1)\n", Sample2), ) + 
+  stat_cor(method="pearson") + # add a correlation to the plot
+  my_plot_themes
+ScatterCorr
 
 
 

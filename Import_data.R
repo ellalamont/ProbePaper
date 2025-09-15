@@ -6,22 +6,22 @@
 
 library(ggplot2)
 library(tidyverse)
-library(ggpubr)
-library(RColorBrewer)
+library(ggpubr) # Has stat_cor function for the correlation plots
+# library(RColorBrewer)
 # library(knitr)
 library(plotly)
 # library(ggprism) # for add_pvalue()
 # library(rstatix) # for adjust_pvalue
 # library(ggpmisc) # https://stackoverflow.com/questions/7549694/add-regression-line-equation-and-r2-on-graph
-library(ggrepel)
-library(pheatmap)
+# library(ggrepel)
+# library(pheatmap)
 # library(dendextend) # May need this for looking at pheatmap clustering
 # library(ggplotify) # To convert pheatmaps to ggplots
 # library(corrplot)
 library(ggcorrplot)
-library(ggfortify) # To make pca plots with plotly
-library(edgeR) # for cpm
-library(sva) # For ComBat_seq batch correction
+# library(ggfortify) # To make pca plots with plotly
+# library(edgeR) # for cpm
+# library(sva) # For ComBat_seq batch correction
 # devtools::install_github("NightingaleHealth/ggforestplot")
 # library(ggforestplot)
 # library(ggforce)
@@ -134,9 +134,9 @@ LimitofDetect_pipeSummary <- ProbeTest5_pipeSummary %>%
 # Should maybe go back and remove all the 1e6 cells that are not specifically for the limit of detection, but not doing that right now.
 # Or what might be easier is just include the samples from ProbeTest5, where I have at least 3 replicates each! 
 
-# THP1 CONTROL FROM PROBE TEST 5
+# THP1 CONTROL FROM PROBETEST 5
 THP1_Control_pipeSummary <- ProbeTest5_pipeSummary %>% 
-  filter(SampleID %in% )
+  filter(str_detect(SampleID, "Control"))
 
 
 ### MERGE the pipeSummaries for Biological Samples ###
@@ -243,7 +243,8 @@ IndigoRv_tpm <- read.csv("Data/Rv/IndigoRv_Mtb.Expression.Gene.Data.TPM.csv")
 # Some other no drug controls I found (9/1/25)
 NoDrugRv_tpm <- read.csv("Data/Rv/NoDrugRv_Mtb.Expression.Gene.Data.TPM.csv")
 
-
+# THP1 CONTROL FROM PROBETEST 5
+ProbeTest5_tpm_THP1Control <- ProbeTest5_tpm %>% select(X, contains("Control"))
 
 # Adjust the names so they are slightly shorter
 # names(All_tpm) <- gsub(x = names(All_tpm), pattern = "_S.*", replacement = "") # This regular expression removes the _S and everything after it (I think...)
