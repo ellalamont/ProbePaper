@@ -37,34 +37,34 @@ CalculateTPM <- function(Raw_reads) {
 ############# TESTING #############
 # GoodBiolSamples_wRv_RawReads
 
-load("Data/MTb.MapSet.rda")
-my_geneLengths <- mapSet[["geneMap"]] %>% select(GENE_ID, NAME, N_EXON_BASES)
-my_geneLengths_ordered <- my_geneLengths[match(All_RawReads$X, my_geneLengths$GENE_ID), ]
-my_geneLengths_ordered <- my_geneLengths_ordered %>% mutate(Kilobases = N_EXON_BASES/1000)
-
-Raw_reads_2 <- GoodBiolSamples_wRv_RawReads %>% column_to_rownames("X")
-All_RPK <- Raw_reads_2 / my_geneLengths_ordered$Kilobases
-ScalingFactor <- colSums(All_RPK) / 1e6
-All_tpm <- sweep(All_RPK, 2, ScalingFactor, FUN = "/")
+# load("Data/MTb.MapSet.rda")
+# my_geneLengths <- mapSet[["geneMap"]] %>% select(GENE_ID, NAME, N_EXON_BASES)
+# my_geneLengths_ordered <- my_geneLengths[match(All_RawReads$X, my_geneLengths$GENE_ID), ]
+# my_geneLengths_ordered <- my_geneLengths_ordered %>% mutate(Kilobases = N_EXON_BASES/1000)
+# 
+# Raw_reads_2 <- GoodBiolSamples_wRv_RawReads %>% column_to_rownames("X")
+# All_RPK <- Raw_reads_2 / my_geneLengths_ordered$Kilobases
+# ScalingFactor <- colSums(All_RPK) / 1e6
+# All_tpm <- sweep(All_RPK, 2, ScalingFactor, FUN = "/")
 
 
 # 9/1/25 Checking with the batch corrected data
-Raw_reads_2 <- counts_corrected
-All_RPK <- Raw_reads_2 / my_geneLengths_ordered$Kilobases
-ScalingFactor <- colSums(All_RPK) / 1e6
-All_tpm <- sweep(All_RPK, 2, ScalingFactor, FUN = "/")
+# Raw_reads_2 <- counts_corrected
+# All_RPK <- Raw_reads_2 / my_geneLengths_ordered$Kilobases
+# ScalingFactor <- colSums(All_RPK) / 1e6
+# All_tpm <- sweep(All_RPK, 2, ScalingFactor, FUN = "/")
 
 
 
 
 # Checking how it looks when I use the raw reads with only the coding Rv genes
-my_geneLengths_ordered2 <- my_geneLengths %>%
-  filter(GENE_ID %in% GoodBiolSamples_RawReads_f$X) %>%
-  arrange(match(GENE_ID, GoodBiolSamples_RawReads_f$X)) %>%
-  mutate(Kilobases = N_EXON_BASES/1000)
-Raw_reads_2 <- GoodBiolSamples_RawReads_f %>% column_to_rownames("X")
-All_RPK2 <- Raw_reads_2 / my_geneLengths_ordered2$Kilobases
-ScalingFactor2 <- colSums(All_RPK2) / 1e6
-All_tpm2 <- sweep(All_RPK2, 2, ScalingFactor2, FUN = "/")
+# my_geneLengths_ordered2 <- my_geneLengths %>%
+#   filter(GENE_ID %in% GoodBiolSamples_RawReads_f$X) %>%
+#   arrange(match(GENE_ID, GoodBiolSamples_RawReads_f$X)) %>%
+#   mutate(Kilobases = N_EXON_BASES/1000)
+# Raw_reads_2 <- GoodBiolSamples_RawReads_f %>% column_to_rownames("X")
+# All_RPK2 <- Raw_reads_2 / my_geneLengths_ordered2$Kilobases
+# ScalingFactor2 <- colSums(All_RPK2) / 1e6
+# All_tpm2 <- sweep(All_RPK2, 2, ScalingFactor2, FUN = "/")
 
 

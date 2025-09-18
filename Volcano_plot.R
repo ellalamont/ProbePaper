@@ -7,7 +7,7 @@ source("Import_DEG_sets.R")
 
 # Plot basics
 my_plot_themes <- theme_bw() +
-  # theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(legend.position = "none",legend.text=element_text(size=14),
         legend.title = element_text(size = 14),
         plot.title = element_text(size=10), 
@@ -165,7 +165,7 @@ make_volcano_function_FDR <- function(my_df, graph_title) {
     labs(title = graph_title) + 
     geom_vline(xintercept = c(-2,2), col = "grey", linetype = "dashed") + 
     geom_hline(yintercept = -log10(0.05), col = "grey", linetype = "dashed") + 
-    geom_text_repel(max.overlaps = 10, size = 3) +  # Can do geom_text_repel or geom_label_rebel
+    geom_text_repel(max.overlaps = 10, size = 4) +  # Can do geom_text_repel or geom_label_rebel # Changed from 3 to 4
     
     # Need it this way so the colors aren't messed up by not having significant up or down
     # scale_color_manual(values = c("#00AFBB", "grey", "#bb0c00")) + 
@@ -193,20 +193,28 @@ single_plot <- make_volcano_function_FDR(list_dfs_2[[13]], df_names[13])
 single_plot
 # ggplotly(single_plot)
 
+# 9/15/25
+single_plot <- make_volcano_function_FDR(list_dfs_f[[1]], df_names[1])
+single_plot
+# ggsave(single_plot,
+#        file = "GoodSputumSubset.ComparedTo.Broth_FilteredFDR_2.pdf",
+#        path = "Figures/Volcano_plot/Log2Fold2_FDR",
+#        width = 7, height = 5, units = "in")
+
 # Loop for all the volcano
-my_path <- "Figures/Volcano_plot/Log2Fold2_FDR"
-for (i in 1:length(list_dfs_f)) { ## USING FILTERED DATA ##
-  
-  current_df_name <- df_names[i]
-  filename <- paste0(current_df_name, "_f_FDR.pdf")
-  
-  my_plot <- make_volcano_function_FDR(list_dfs_f[[i]], df_names[i]) ## USING FILTERED DATA ##
-  
-  ggsave(my_plot,
-         file = filename,
-         path = my_path,
-         width = 7, height = 5, units = "in")
-}
+# my_path <- "Figures/Volcano_plot/Log2Fold2_FDR"
+# for (i in 1:length(list_dfs_f)) { ## USING FILTERED DATA ##
+#   
+#   current_df_name <- df_names[i]
+#   filename <- paste0(current_df_name, "_f_FDR.pdf")
+#   
+#   my_plot <- make_volcano_function_FDR(list_dfs_f[[i]], df_names[i]) ## USING FILTERED DATA ##
+#   
+#   ggsave(my_plot,
+#          file = filename,
+#          path = my_path,
+#          width = 7, height = 5, units = "in")
+# }
 
 
 

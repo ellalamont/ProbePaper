@@ -13,7 +13,7 @@ library(plotly)
 # library(ggprism) # for add_pvalue()
 # library(rstatix) # for adjust_pvalue
 # library(ggpmisc) # https://stackoverflow.com/questions/7549694/add-regression-line-equation-and-r2-on-graph
-# library(ggrepel)
+library(ggrepel) # Has geom_text_repel
 # library(pheatmap)
 # library(dendextend) # May need this for looking at pheatmap clustering
 # library(ggplotify) # To convert pheatmaps to ggplots

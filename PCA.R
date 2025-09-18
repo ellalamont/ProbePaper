@@ -16,7 +16,7 @@ source("Import_data.R") # To get GoodBiolSamples_tpm and BiolSamples_pipeSummary
 # Plot basics
 my_plot_themes <- theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(legend.position = "right",legend.text=element_text(size=14),
+  theme(legend.position = "bottom",legend.text=element_text(size=14),
         # legend.title = element_text(size = 14),
         legend.title = element_blank(),
         plot.title = element_text(size=10), 
@@ -74,16 +74,16 @@ PCA_tpm_1 <- my_PCA_df %>%
   scale_fill_manual(values = my_fav_colors2) +  
   scale_shape_manual(values = my_fav_shapes2) + 
   # geom_text_repel(aes(label = Week), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
-  labs(title = "PCA: >1M reads and >80% genes with at least 10 reads",
-       subtitle = "TPM",
+  labs(# title = "PCA: >1M reads and >80% genes with at least 10 reads",
+       # subtitle = "TPM",
        x = paste0("PC1: ", summary_PCA[1,1], "%"),
        y = paste0("PC2: ", summary_PCA[2,1], "%")) +
   my_plot_themes
 PCA_tpm_1
 ggsave(PCA_tpm_1,
-       file = paste0("TPM_GoodSamples_1.pdf"),
-       path = "Figures/PCA",
-       width = 8, height = 5, units = "in")
+       file = paste0("TPM_GoodSamples_2.pdf"),
+       path = "Figures_preNonCodingRemoval/PCA",
+       width = 6, height = 6, units = "in")
 
 
 # 3D plot
