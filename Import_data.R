@@ -166,9 +166,9 @@ Rv_metadata <- data.frame(
   Type3 = c("Rv7", "Rv7", "Rv8.3", "Rv8.3", "Rv5.7", "Rv5.7", "IndigoRv"), 
   Run = c("LanceRun", "LanceRun", "LanceRun", "LanceRun", "LanceRun", "LanceRun", "IndigoRun"), stringsAsFactors = FALSE)
 
-NoDrugRv_metadata <- data.frame(
-  SampleID = c(colnames(NoDrugRv_tpm[-1])),
-  Type3 = c("NoDrugRv"), Run = c("NoDrugRun"), stringsAsFactors = FALSE)
+# NoDrugRv_metadata <- data.frame(
+#   SampleID = c(colnames(NoDrugRv_tpm[-1])),
+#   Type3 = c("NoDrugRv"), Run = c("NoDrugRun"), stringsAsFactors = FALSE)
 
 # Add it to the pipeSummary
 BiolSamples_pipeSummary_2 <- bind_rows(BiolSamples_pipeSummary, Rv_metadata)
