@@ -29,7 +29,7 @@ library(ggcorrplot)
 # DuffyTools
 library(devtools)
 # install_github("robertdouglasmorrison/DuffyTools")
-library(DuffyTools)
+# library(DuffyTools)
 # install_github("robertdouglasmorrison/DuffyNGS")
 # BiocManager::install("robertdouglasmorrison/DuffyTools")
 
@@ -271,6 +271,7 @@ GoodBiolSamples_w_Rv_tpm <- merge(GoodBiolSamples_tpm, LanceRv_tpm)
 GoodBiolSamples_w_Rv_tpm <- merge(GoodBiolSamples_w_Rv_tpm, IndigoRv_tpm)
 # GoodBiolSamples_w_Rv_tpm <- merge(GoodBiolSamples_w_Rv_tpm, NoDrugRv_tpm)
 
+
 ###########################################################
 ############### IMPORT AND PROCESS RAW READS ##############
 
@@ -310,12 +311,36 @@ GoodBiolSamples_wRv_RawReads <- merge(GoodBiolSamples_RawReads, LanceRv_RawReads
 source("Function_CalculateTPM.R")
 
 # Keep only the Rv#* coding genes 
-GoodBiolSamples_RawReads_f <- GoodBiolSamples_RawReads %>% filter(str_detect(X, "^Rv\\d+.*"))
+GoodBiolSamples_RawReads_f <- GoodBiolSamples_RawReads %>% 
+  filter(str_detect(X, "^Rv\\d+.*"))
 # Convert all to TPM
-GoodBiolSamples_tpm_f <- CalculateTPM(GoodBiolSamples_RawReads_f)
+GoodBiolSamples_tpm_f <- CalculateTPM_RvOnly(GoodBiolSamples_RawReads_f)
 
-All_RawReads_f <- All_RawReads %>% filter(str_detect(X, "^Rv\\d+.*"))
-All_tpm_f <- CalculateTPM(All_RawReads_f)
+All_RawReads_f <- All_RawReads %>% 
+  filter(str_detect(X, "^Rv\\d+.*"))
+All_tpm_f <- CalculateTPM_RvOnly(All_RawReads_f)
 
-ProbeTest5_RawReads_f <- ProbeTest5_RawReads %>% filter(str_detect(X, "^Rv\\d+.*"))
-ProbeTest5_tpm_f <- CalculateTPM(ProbeTest5_RawReads_f)
+ProbeTest5_RawReads_f <- ProbeTest5_RawReads %>% 
+  filter(str_detect(X, "^Rv\\d+.*"))
+ProbeTest5_tpm_f <- CalculateTPM_RvOnly(ProbeTest5_RawReads_f)
+
+
+
+###########################################################
+######## CALCULATE TXN COVERAGE FROM Rv GENES ONLY ########
+
+# Count, for each column (sample), how many genes have >= 10 reads
+NumGoodReads <- colSums(All_RawReads_f >= 10)
+
+# Add as new column in All_pipeSummary, matching by SampleID2
+BiolSamples_pipeSummary$AtLeast.10.Reads_f <- NumGoodReads[BiolSamples_pipeSummary$SampleID]
+
+# Add transcriptional coverage
+BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>% mutate(Txn_Coverage_f = round(AtLeast.10.Reads_f/4030*100))
+
+
+
+
+
+
+
