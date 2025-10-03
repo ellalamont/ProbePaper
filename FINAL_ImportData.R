@@ -4,13 +4,13 @@
 ################ LOAD PACKAGES #################
 
 library(ggplot2)
+library(ggpmisc)
 library(tidyverse)
 library(ggpubr) 
 library(ggrepel) 
 library(ggcorrplot)
 library(openxlsx)
 library(readxl)
-
 
 ###########################################################
 ##################### IMPORT METADATA #####################
@@ -24,7 +24,8 @@ BiolSamples_pipeSummary <- read_excel("metadata.xlsx", sheet = "BiolSamples")
 # Rearrange
 ordered_Probe <- c("Uncaptured", "Captured")
 CapturedVsNot_pipeSummary$Probe <- factor(CapturedVsNot_pipeSummary$Probe, levels = ordered_Probe)
-
+ordered_BiolSample <- c("Caseum mimic", "Rabbit", "Marmoset", "Sputum")
+BiolSamples_pipeSummary$Type <- factor(BiolSamples_pipeSummary$Type, levels = ordered_BiolSample)
 
 ###########################################################
 ##################### IMPORT RAW READS ####################
@@ -32,6 +33,29 @@ CapturedVsNot_pipeSummary$Probe <- factor(CapturedVsNot_pipeSummary$Probe, level
 excel_sheets("rawreads.xlsx")
 
 All_RawReads <- read_excel("rawreads.xlsx", sheet = "All_RawReads")
+
+###########################################################
+############ SUM TOTAL READS ALIGNING TO Rv  ##############
+
+NumRawReads <- round(colSums(All_RawReads %>% column_to_rownames("X")))
+
+LimitofDetect_pipeSummary$N_Genomic_Rv <- NumRawReads[LimitofDetect_pipeSummary$SampleID]
+CapturedVsNot_pipeSummary$N_Genomic_Rv <- NumRawReads[CapturedVsNot_pipeSummary$SampleID]
+BiolSamples_pipeSummary$N_Genomic_Rv <- NumRawReads[BiolSamples_pipeSummary$SampleID]
+
+# Add P_Genomic
+LimitofDetect_pipeSummary <- LimitofDetect_pipeSummary %>% mutate(P_Genomic_Rv = round((N_Genomic_Rv/RawReads)*100, 2))
+CapturedVsNot_pipeSummary <- CapturedVsNot_pipeSummary %>% mutate(P_Genomic_Rv = round((N_Genomic_Rv/RawReads)*100, 2))
+BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>% mutate(P_Genomic_Rv = round((N_Genomic_Rv/RawReads)*100, 2))
+
+# N_NonCodingMtbRNA
+LimitofDetect_pipeSummary <- LimitofDetect_pipeSummary %>% mutate(N_NonCodingMtbRNA = RawReads - N_Genomic_Rv - N_RiboClear - N_NoHit)
+CapturedVsNot_pipeSummary <- CapturedVsNot_pipeSummary %>% mutate(N_NonCodingMtbRNA = RawReads - N_Genomic_Rv - N_RiboClear - N_NoHit)
+BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>% mutate(N_NonCodingMtbRNA = RawReads - N_Genomic_Rv - N_RiboClear - N_NoHit)
+
+LimitofDetect_pipeSummary <- LimitofDetect_pipeSummary %>% mutate(P_NonCodingMtbRNA = round((N_NonCodingMtbRNA/RawReads)*100, 2))
+CapturedVsNot_pipeSummary <- CapturedVsNot_pipeSummary %>% mutate(P_NonCodingMtbRNA = round((N_NonCodingMtbRNA/RawReads)*100, 2))
+BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>% mutate(P_NonCodingMtbRNA = round((N_NonCodingMtbRNA/RawReads)*100, 2))
 
 
 ###########################################################
@@ -90,5 +114,24 @@ CalculateTPM_RvOnly <- function(Raw_reads) {
 }
 
 All_tpm <- CalculateTPM_RvOnly(All_RawReads)
+
+
+###########################################################
+####################### IMPORT DEG ########################
+
+file <- "DEG.xlsx"
+
+# Get all sheet names
+sheet_names <- getSheetNames(file)
+
+# Read each sheet into a list
+DEG_dfs <- lapply(sheet_names, function(s) read.xlsx(file, sheet = s))
+
+# Name the list elements
+names(DEG_dfs) <- sheet_names
+
+
+
+
 
 

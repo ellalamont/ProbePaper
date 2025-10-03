@@ -7,7 +7,6 @@ source("FINAL_ImportData.R")
 ###################### FIGURE 2A ##########################
 
 my_plot_themes <- theme_void() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(legend.position = "none",legend.text=element_text(size=14),
         strip.text = element_text(size = 12, face = "bold"), # For the facet
         legend.title = element_text(size = 14),
@@ -17,21 +16,20 @@ my_plot_themes <- theme_void() +
         axis.title.y = element_blank(),
         axis.text.y = element_blank(), 
         plot.subtitle = element_text(size=10), 
-        plot.margin = margin(2, 2, 2, 2),
-        panel.border = element_blank(),
-        legend.box.background = element_blank())
+        plot.margin = margin(2, 2, 2, 2))
 
 ### AVERAGE THE REPLICATES ###
 Averages_CapturedVsNot_pipeSummary <- CapturedVsNot_pipeSummary %>%
   group_by(Probe) %>%
   summarize(count = n(),
-            mean_P_Genomic = mean(P_Genomic),
+            mean_P_Genomic = mean(P_Genomic_Rv),
             mean_P_RiboClear = mean(P_RiboClear),
-            mean_P_NoHit = mean(P_NoHit)) %>%
-  pivot_longer(cols = c("mean_P_Genomic", "mean_P_RiboClear", "mean_P_NoHit"), names_to = "Percent_Type", values_to = "Percent") %>%
+            mean_P_NoHit = mean(P_NoHit),
+            mean_P_ncRNA = mean(P_NonCodingMtbRNA)) %>%
+  pivot_longer(cols = c("mean_P_Genomic", "mean_P_RiboClear", "mean_P_NoHit", "mean_P_ncRNA"), names_to = "Percent_Type", values_to = "Percent") %>%
   mutate(Percent = round(Percent, 1)) 
 
-replacement_values <- c(mean_P_Genomic = "mRNA", mean_P_RiboClear = "rRNA", mean_P_NoHit = "other RNA")
+replacement_values <- c(mean_P_Genomic = "mRNA", mean_P_RiboClear = "rRNA", mean_P_NoHit = "Host RNA", mean_P_ncRNA = "ncRNA")
 Averages_CapturedVsNot_pipeSummary <- Averages_CapturedVsNot_pipeSummary %>% 
   mutate(Percent_Type = replacement_values[Percent_Type])
 
@@ -45,7 +43,7 @@ Fig2A <- Averages_CapturedVsNot_pipeSummary %>%
   geom_bar(width = 1, stat = "identity", color = "black") + 
   coord_polar(theta = "y", start = 0) + 
   facet_wrap(~Probe, labeller = as_labeller(c("Uncaptured" = "Uncaptured average", "Captured" = "Captured average"))) +
-  scale_fill_manual(values = c("#00CED1", "#708090", "#E0D8B0")) + 
+  scale_fill_manual(values = c("#708090", "#00CED1", "#B9AED3", "#E0D8B0")) + 
   geom_text_repel(aes(y = midpoint, label = paste(Percent_Type, "\n", scales::percent(Percent / 100))), size = 4, color = "black", box.padding = 0.3, force = 2, force_pull = 2, min.segment.length = 0.2, segment.size = 0.5) + 
   # labs(title = "AVERAGES THP1 cells spiked with 1e6 H37Ra") + 
   my_plot_themes
@@ -68,29 +66,17 @@ my_plot_themes <- theme_bw() +
         plot.margin = margin(2, 2, 2, 2))
 
 Fig2B <- CapturedVsNot_pipeSummary %>%
-  ggplot(aes(x = Probe, y = N_Genomic)) + 
+  ggplot(aes(x = Probe, y = N_Genomic_Rv)) + 
   geom_point(size = 2.5, alpha = 0.8, stroke = 0.8, color = "black") + 
   geom_line(aes(group = Replicates), color = "black", linewidth = 0.5, linetype = "dashed") + 
   geom_hline(yintercept = 1000000, linetype = "dashed", alpha = 0.5) + 
-  scale_y_continuous(limits = c(0,20000000), breaks = seq(0, 20000000, 4000000)) + 
+  scale_y_continuous(limits = c(0,17000000), breaks = seq(0, 17000000, 4000000)) + 
   labs(x = NULL, y = "# reads aligning to Mtb") + 
   my_plot_themes
 Fig2B
 
 ###########################################################
 ###################### FIGURE 2C ##########################
-
-my_plot_themes <- theme_bw() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(legend.position = "none", legend.text=element_text(size=10),
-        legend.title = element_text(size = 10),
-        plot.title = element_text(size=10), 
-        axis.title.x = element_text(size=14), 
-        axis.text.x = element_text(angle = 0, size=14, vjust=0, hjust=0.5),
-        axis.title.y = element_text(size=14),
-        axis.text.y = element_text(size=14), 
-        plot.subtitle = element_text(size=9), 
-        plot.margin = margin(2, 2, 2, 2))
 
 Fig2C <- CapturedVsNot_pipeSummary %>% 
   ggerrorplot(x = "Probe", y = "Txn_Coverage", desc_stat = "mean_sd", error.plot = "errorbar", add = "mean", color = "black", size = 0.4, add.params = list(size = 0.4)) +
@@ -105,23 +91,11 @@ Fig2C
 ###########################################################
 ###################### FIGURE 2D ##########################
 
-my_plot_themes <- theme_bw() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(legend.position = "right",legend.text=element_text(size=14),
-        legend.title = element_text(size = 14),
-        plot.title = element_text(size=10), 
-        axis.title.x = element_text(size=14), 
-        axis.text.x = element_text(angle = 0, size=14, vjust=0, hjust=0.5),
-        axis.title.y = element_text(size=14),
-        axis.text.y = element_text(size=14), 
-        plot.subtitle = element_text(size=9), 
-        plot.margin = margin(10, 10, 10, 20))
-
 Fig2D <- LimitofDetect_pipeSummary %>% 
-  ggerrorplot(x = "Ra_cells2", y = "N_Genomic", desc_stat = "mean_sd", error.plot = "errorbar", add = "mean", color = "black", size = 0.4, add.params = list(size = 0.4)) +
+  ggerrorplot(x = "Ra_cells2", y = "N_Genomic_Rv", desc_stat = "mean_sd", error.plot = "errorbar", add = "mean", color = "black", size = 0.4, add.params = list(size = 0.4)) +
   geom_point(alpha = 0.7, position = position_jitter(width = 0.1, seed = 42), size = 1) + 
   geom_hline(yintercept = 1000000, linetype = "dashed", alpha = 0.5) + 
-  scale_y_continuous(limits = c(0,20000000), breaks = seq(0, 20000000, 4000000)) + 
+  scale_y_continuous(limits = c(0,17000000), breaks = seq(0, 17000000, 4000000)) + 
   labs(x = "# Mtb cells in spiked sample", y = "# reads aligning to Mtb") + 
   my_plot_themes
 Fig2D
@@ -129,20 +103,8 @@ Fig2D
 ###########################################################
 ###################### FIGURE 2E ##########################
 
-my_plot_themes <- theme_bw() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(legend.position = "right",legend.text=element_text(size=14),
-        legend.title = element_text(size = 14),
-        plot.title = element_text(size=10), 
-        axis.title.x = element_text(size=14), 
-        axis.text.x = element_text(angle = 0, size=14, vjust=0, hjust=0.5),
-        axis.title.y = element_text(size=14),
-        axis.text.y = element_text(size=14), 
-        plot.subtitle = element_text(size=9), 
-        plot.margin = margin(10, 10, 10, 20))
-
 Fig2E <- LimitofDetect_pipeSummary %>% 
-  ggerrorplot(x = "Ra_cells2", y = "P_Genomic", desc_stat = "mean_sd", error.plot = "errorbar", add = "mean", color = "black", size = 0.4, add.params = list(size = 0.4)) + 
+  ggerrorplot(x = "Ra_cells2", y = "P_Genomic_Rv", desc_stat = "mean_sd", error.plot = "errorbar", add = "mean", color = "black", size = 0.4, add.params = list(size = 0.4)) + 
   geom_point(alpha = 0.7, position = position_jitter(width = 0.1, seed = 42), size = 1) + 
   scale_y_continuous(limits = c(0,100), breaks = seq(0, 100, 10)) + 
   labs(x = "# Mtb cells in spiked sample", y = "% reads aligning to Mtb") + 
@@ -152,18 +114,6 @@ Fig2E
 
 ###########################################################
 ###################### FIGURE 2F ##########################
-
-my_plot_themes <- theme_bw() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(legend.position = "right",legend.text=element_text(size=14),
-        legend.title = element_text(size = 14),
-        plot.title = element_text(size=10), 
-        axis.title.x = element_text(size=14), 
-        axis.text.x = element_text(angle = 0, size=14, vjust=0, hjust=0.5),
-        axis.title.y = element_text(size=14),
-        axis.text.y = element_text(size=14), 
-        plot.subtitle = element_text(size=9), 
-        plot.margin = margin(10, 10, 10, 20))
 
 Fig2F <- LimitofDetect_pipeSummary %>% 
   ggerrorplot(x = "Ra_cells2", y = "Txn_Coverage", desc_stat = "mean_sd", error.plot = "errorbar", add = "mean", color = "black", size = 0.4, add.params = list(size = 0.4)) +
@@ -177,18 +127,6 @@ Fig2F
 
 ###########################################################
 ###################### FIGURE 2G ##########################
-
-my_plot_themes <- theme_bw() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(legend.position = "right",legend.text=element_text(size=14),
-        legend.title = element_text(size = 14),
-        plot.title = element_text(size=10), 
-        axis.title.x = element_text(size=14), 
-        axis.text.x = element_text(angle = 0, size=14, vjust=0, hjust=0.5),
-        axis.title.y = element_text(size=14),
-        axis.text.y = element_text(size=14), 
-        plot.subtitle = element_text(size=9), 
-        plot.margin = margin(2, 2, 2, 2))
 
 my_tpm <- All_tpm # %>% rename("Gene" = "X")
 names(my_tpm) <- gsub(x = names(my_tpm), pattern = "_S.*", replacement = "")
@@ -223,18 +161,6 @@ Fig2G
 
 ###########################################################
 ###################### FIGURE 2H ##########################
-
-my_plot_themes <- theme_bw() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(legend.position = "right",legend.text=element_text(size=14),
-        legend.title = element_text(size = 14),
-        plot.title = element_text(size=10), 
-        axis.title.x = element_text(size=14), 
-        axis.text.x = element_text(angle = 0, size=14, vjust=0, hjust=0.5),
-        axis.title.y = element_text(size=14),
-        axis.text.y = element_text(size=14), 
-        plot.subtitle = element_text(size=9), 
-        plot.margin = margin(2, 2, 2, 2))
 
 my_tpm <- All_tpm
 names(my_tpm) <- gsub(x = names(my_tpm), pattern = "_S.*", replacement = "")

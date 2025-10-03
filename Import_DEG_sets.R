@@ -136,6 +136,36 @@ list_dfs_f <- lapply(list_dfs_2, function(df) {
 })
 
 
+###########################################################
+################# EXPORT THE LIST OF DFs ##################
+# Just export the ones I use in the table
+
+wb <- createWorkbook()
+
+addWorksheet(wb, "Sputum.vs.Broth")
+writeData(wb, "Sputum.vs.Broth", list_dfs_f$GoodSputumSubset.ComparedTo.Broth %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
+addWorksheet(wb, "CaseumMimic.vs.Broth")
+writeData(wb, "CaseumMimic.vs.Broth", list_dfs_f$CaseumMimic.ComparedTo.Broth %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
+addWorksheet(wb, "Rabbit.vs.Broth")
+writeData(wb, "Rabbit.vs.Broth", list_dfs_f$Rabbit.ComparedTo.Broth %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
+addWorksheet(wb, "Marmoset.vs.Broth")
+writeData(wb, "Marmoset.vs.Broth", list_dfs_f$Marmoset.ComparedTo.Broth %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
+addWorksheet(wb, "Sputum.vs.CaseumMimic")
+writeData(wb, "Sputum.vs.CaseumMimic", list_dfs_f$GoodSputumSubset.ComparedTo.CaseumMimic %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
+addWorksheet(wb, "Sputum.vs.Rabbit")
+writeData(wb, "Sputum.vs.Rabbit", list_dfs_f$GoodSputumSubset.ComparedTo.Rabbit %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
+addWorksheet(wb, "Sputum.vs.Marmoset")
+writeData(wb, "Sputum.vs.Marmoset", list_dfs_f$GoodSputumSubset.ComparedTo.Marmoset %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
+addWorksheet(wb, "CaseumMimic.vs.Rabbit")
+writeData(wb, "CaseumMimic.vs.Rabbit", list_dfs_f$CaseumMimic.ComparedTo.Rabbit %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
+addWorksheet(wb, "CaseumMimic.vs.Marmoset")
+writeData(wb, "CaseumMimic.vs.Marmoset", list_dfs_f$CaseumMimic.ComparedTo.Marmoset %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
+addWorksheet(wb, "Rabbit.vs.Marmoset")
+writeData(wb, "Rabbit.vs.Marmoset", list_dfs_f$Rabbit.ComparedTo.Marmoset %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
+addWorksheet(wb, "L4.vs.L2")
+writeData(wb, "L4.vs.L2", list_dfs_f$GoodSputumSubset_L4.ComparedTo.L2 %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
+
+saveWorkbook(wb, "DEG.xlsx", overwrite = TRUE)
 
 ###########################################################
 ############# IMPORT BOB's METAGENESETS DATA ##############
