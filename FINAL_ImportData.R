@@ -119,7 +119,7 @@ All_tpm <- CalculateTPM_RvOnly(All_RawReads)
 ###########################################################
 ####################### IMPORT DEG ########################
 
-file <- "DEG.xlsx"
+file <- "Data.xlsx"
 
 # Get all sheet names
 sheet_names <- getSheetNames(file)
@@ -129,6 +129,34 @@ DEG_dfs <- lapply(sheet_names, function(s) read.xlsx(file, sheet = s))
 
 # Name the list elements
 names(DEG_dfs) <- sheet_names
+
+
+
+###########################################################
+############ iMODULONS: MAKE LISTS OF GROUPS ##############
+
+CentralCarbon_iModulons <- c("Peptidoglycan Biosynthesis", "Central Carbon Metabolism", "Fumarate Reductase", "PrpR", "BkaR", "Nicotinate Metabolism")
+CentralCarbon_iModulons_pattern <- str_c(CentralCarbon_iModulons, collapse = "|") #
+AminoAcid_iModulons <- c("GroEL-GroES Complex", "Leucine Related", "LysG", "ArgR") 
+AminoAcid_iModulons_pattern <- str_c(AminoAcid_iModulons, collapse = "|") 
+NucleicAcid_iModulons <- c("PyrR", "Rv0135\\+Rv1019", "Nucleic Acid Hydrolysis") 
+NucleicAcid_iModulons_pattern <- str_c(NucleicAcid_iModulons, collapse = "|") 
+FattyAcid.Cholesterol_iModulons <- c("Fatty Acid Biosynthesis", "KstR2", "Mycofactocin Synthesis Pathway", "FasR", "Polyketide Synthase Complex", "Rv0681") 
+FattyAcid.Cholesterol_iModulons_pattern <- str_c(FattyAcid.Cholesterol_iModulons, collapse = "|") 
+Metal_iModulons <- c("RicR", "IdeR", "M-box", "Zur", "Hpt-2b Induced") 
+Metal_iModulons_pattern <- str_c(Metal_iModulons, collapse = "|") 
+SulfurMetabolism_iModulons <- c("Sulfur Metabolism") 
+SulfurMetabolism_iModulons_pattern <- str_c(SulfurMetabolism_iModulons, collapse = "|") 
+Growth_iModulons <- c("Positive Regulation of Growth") 
+Growth_iModulons_pattern <- str_c(Growth_iModulons, collapse = "|") 
+Redox_iModulons <- c("DevR-1", "WhiB4", "DevR-2", "WhiB1", "WhiB4/IdeR", "Rv1828/SigH", "Rv1776c\\+WhiB4", "VirS", "WhiB6") 
+Redox_iModulons_pattern <- str_c(Redox_iModulons, collapse = "|") 
+AcidStress_iModulons <- c("MarR") 
+AcidStress_iModulons_pattern <- str_c(AcidStress_iModulons, collapse = "|") 
+Antibiotic_iModulons <- c("Lsr2", "Blal", "Rv0078\\+Rv2034", "WhiB7", "IniR") 
+Antibiotic_iModulons_pattern <- str_c(Antibiotic_iModulons, collapse = "|") 
+Virulence.Persistence_iModulons <- c("Rv0576", "Mce1R", "SigH", "PhoP", "Mce3R", "MprA", "PDIM\\;PGL Synthesis", "Rv2488c", "SigC", "SigD", "MbcA\\+Rv3249c\\+Rv3066", "SigK") 
+Virulence.Persistence_iModulons_pattern <- str_c(Virulence.Persistence_iModulons, collapse = "|") 
 
 
 

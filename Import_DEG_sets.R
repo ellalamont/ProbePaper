@@ -165,7 +165,7 @@ writeData(wb, "Rabbit.vs.Marmoset", list_dfs_f$Rabbit.ComparedTo.Marmoset %>% se
 addWorksheet(wb, "L4.vs.L2")
 writeData(wb, "L4.vs.L2", list_dfs_f$GoodSputumSubset_L4.ComparedTo.L2 %>% select(GENE_NAME, GENE_ID, PRODUCT, LOG2FOLD, FDR_PVALUE, DE2_FDR, DE2_FDR_labels) %>% rename(DE = DE2_FDR, Labels = DE2_FDR_labels))
 
-saveWorkbook(wb, "DEG.xlsx", overwrite = TRUE)
+# saveWorkbook(wb, "DEG.xlsx", overwrite = TRUE)
 
 ###########################################################
 ############# IMPORT BOB's METAGENESETS DATA ##############
@@ -185,3 +185,29 @@ saveWorkbook(wb, "DEG.xlsx", overwrite = TRUE)
 `MetaGeneSetsLancepH7_Rv.vs.Ra_UP` <- read.delim("Data/Differential_Expression/Ra_vs_Rv.LancepH7/Rv_pH7.MTb.MetaGeneSets.UP.txt")
 `MetaGeneSets_GoodSputumSubset.vs.LancepH7_Rv_UP` <- read.delim("Data/Differential_Expression/SputumSubset_vs_Rv.LancepH7/W0.MTb.MetaGeneSets.UP.txt")
 `MetaGeneSets_LancepH7_Rv.vs.Indigo_Rv_UP` <- read.delim("Data/Differential_Expression/LancepH7.Rv_vs_Indigo_Rv/Rv_pH7.MTb.MetaGeneSets.UP.txt")
+
+
+
+###########################################################
+#################### SAVING FOR PAPER #####################
+
+SputumVsBroth_iModulons <- MetaGeneSets_GoodSputumSubset.vs.Broth_UP %>% 
+  filter(str_detect(PathName, "iModulons")) %>% 
+  filter(!str_detect(PathName, "ISB.Corems")) %>%
+  # filter(LOG2FOLD >= 0) %>% 
+  mutate(PathName = PathName %>%
+           str_replace("iModulons: ", "") %>%
+           str_replace("<.*", "") %>%        # remove anything after <
+           str_remove_all("&nbsp;") %>%      # remove all &nbsp;
+           str_trim())  %>%
+  select(PathName, CellType, N_Genes, LOG2FOLD, AVG_PVALUE, AVG_RANK) %>%
+  mutate(FDR.pvalue  = p.adjust(AVG_PVALUE, method = "fdr")) %>% # Because Bob's pipeline doesn't actually do this...
+  # rename("Sputum_LOG2FOLD" = "LOG2FOLD", "Sputum_AVG.PVALUE" = "AVG_PVALUE", "Sputum_AVG.RANK" = "AVG_RANK") %>%
+  # mutate()
+  select(PathName, N_Genes, LOG2FOLD, FDR.pvalue)
+
+
+# Save the one being used in the paper
+addWorksheet(wb, "Sputum.vs.Broth_iModulons")
+writeData(wb, "Sputum.vs.Broth_iModulons", SputumVsBroth_iModulons)
+saveWorkbook(wb, "DEG.xlsx", overwrite = TRUE)

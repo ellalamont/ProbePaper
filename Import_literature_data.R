@@ -40,4 +40,17 @@ combined_lit_df <- full_join(combined_lit_df,
                          by = "Gene")
 
 
+###########################################################
+##################### SAVE FOR PAPER ######################
+# Adding to the wb
+
+addWorksheet(wb, "Literature.Data")
+writeData(wb, "Literature.Data", combined_lit_df)
+saveWorkbook(wb, "DEG.xlsx", overwrite = TRUE)
+
+
+
+
+
+
 

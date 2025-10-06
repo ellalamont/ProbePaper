@@ -22,6 +22,11 @@ levels(as.factor(SNPs_df$SampleID))
 
 SNPs_df$SampleID <- gsub("_S(.*)", "", as.character(SNPs_df$SampleID))
 
+# Save in the wb
+# addWorksheet(wb, "phoP.SNPs")
+# writeData(wb, "phoP.SNPs", SNPs_df)
+# saveWorkbook(wb, "DEG.xlsx", overwrite = TRUE)
+
 ###########################################################
 ################# ISOLATE RRDR REGION #####################
 
