@@ -193,3 +193,27 @@ Fig2H <- my_tpm_Log10 %>%
   my_plot_themes
 Fig2H
 
+
+###########################################################
+##################### COMBINE FIGURES #####################
+
+top <- plot_grid(Fig2A, Fig2B, Fig2C,
+                 Fig2D, Fig2E, Fig2F,
+                 ncol = 3, align = "hv", axis = "tblr")
+bottom <- plot_grid(NULL,  # left spacer
+                    plot_grid(Fig2G, Fig2H, ncol = 2, rel_widths = c(1,1)),
+                    NULL,  # right spacer
+                    ncol = 3, rel_widths = c(0.2, 1, 0.2))  # adjust spacers vs. center width
+combined <- plot_grid(
+  top, bottom,
+  ncol = 1, rel_heights = c(2, 1))  # adjust ratio as needed
+combined
+
+ggsave(combined,
+       file = paste0("FINAL_Figure2.pdf"),
+       path = "Figures/CombinedFigures",
+       width = 15, height = 12, units = "in")
+
+
+
+

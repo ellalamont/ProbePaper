@@ -147,3 +147,18 @@ Fig3F <- BiolSamples_pipeSummary %>%
                label.x = "left", label.y = 0.99, parse = T, size = 4)
 Fig3F
 
+###########################################################
+##################### COMBINE FIGURES #####################
+
+combined <- plot_grid(Fig3A, Fig3B, Fig3C, Fig3D, Fig3E, Fig3F, align = "hv", axis = "tblr", nrow = 2, ncol = 3, rel_widths = c(1, 1, 1), rel_heights = c(1, 1))
+combined
+ggsave(combined,
+       file = paste0("FINAL_Figure3.pdf"),
+       path = "Figures/CombinedFigures",
+       width = 15, height = 10, units = "in")
+
+
+
+
+
+

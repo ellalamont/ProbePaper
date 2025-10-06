@@ -65,5 +65,3 @@ ggsave(combined4,
 #        file = paste0("Figure3_v1.png"),
 #        path = "Figures/CombinedFigures",
 #        width = 15, height = 10, units = "in")
-
-
