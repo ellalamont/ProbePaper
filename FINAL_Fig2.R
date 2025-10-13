@@ -185,9 +185,7 @@ Fig2H <- my_tpm_Log10 %>%
   geom_point(aes(text = Gene), alpha = 0.7, size = 0.5, color = "black") +
   geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
   # geom_text(aes(label = Gene), size = 2, vjust = -0.5, hjust = 0.5, check_overlap = T) +  
-  labs(# title = paste0("THP1 ProbeTest 3 vs 4: Not scaled Samples AVERAGED: ", Sample1, " vs ", Sample2),
-    # subtitle = "Pearson correlation; 5 samples: THP1 1e6 Ra spiked ",
-    x = paste0("Log10(TPM+1)\nSpiked samples probe B"), 
+  labs(x = paste0("Log10(TPM+1)\nSpiked samples probe B"), 
     y = paste0("Log10(TPM+1)\nSpiked samples probe A")) + 
   stat_cor(method="pearson") + # add a correlation to the plot
   my_plot_themes
@@ -215,5 +213,16 @@ ggsave(combined,
        width = 15, height = 12, units = "in")
 
 
+###########################################################
+######## NUMBER OF GENES WITH 0 READS (UNCAPTURED) ########
 
+# THP1_1e6_1b_S29, THP1_1e6_2a_S30, THP1_1e6_3b_S33
 
+Uncaptured_RawReads <- All_RawReads %>% select(X, THP1_1e6_1b_S29, THP1_1e6_2a_S30, THP1_1e6_3b_S33)
+
+NumNoReads <- colSums(Uncaptured_RawReads == 0)
+# X THP1_1e6_1b_S29 THP1_1e6_2a_S30 THP1_1e6_3b_S33 
+# 0             150             132             687 
+(150 + 132 + 687) / 3
+mean(c(150, 132, 687))
+sd(c(150, 132, 687))

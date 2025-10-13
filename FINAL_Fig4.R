@@ -63,6 +63,10 @@ Fig4A <- my_PCA_df %>%
     y = paste0("PC2: ", summary_PCA[2,1], "%")) +
   my_plot_themes
 Fig4A
+# ggsave(Fig4A,
+#        file = paste0("Fig4A.pdf"),
+#        path = "Figures/PCA/",
+#        width = 6, height = 6, units = "in")
 
 
 ###########################################################
@@ -105,7 +109,8 @@ DEG_count_df <- DEG_count_df %>% mutate(All_Signifiant_DEG = `significant down` 
 my_plot_themes <- theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(legend.position = "none",legend.text=element_text(size=14),
-        legend.title = element_text(size = 14),
+        # legend.title = element_text(size = 14),
+        legend.title = element_blank(),
         plot.title = element_text(size=10), 
         axis.title.x = element_text(size=14), 
         axis.text.x = element_text(angle = 0, size=14, vjust=1, hjust=0.5),
@@ -123,6 +128,8 @@ make_volcano_function <- function(my_df, graph_title) {
     geom_vline(xintercept = c(-1,1), col = "grey", linetype = "dashed") + 
     geom_hline(yintercept = -log10(0.05), col = "grey", linetype = "dashed") + 
     geom_text_repel(max.overlaps = 10, size = 3) +  
+    
+    labs(title = NULL, y = "-log10(FDR-adjusted p-value)") +
   
     scale_color_manual(values = c(`significant down` = "#00AFBB", `not significant` = "grey", `significant up` = "#bb0c00")) # +
   
@@ -146,6 +153,11 @@ make_volcano_function <- function(my_df, graph_title) {
 
 Sputum.vs.Broth_volcano <- make_volcano_function(DEG_dfs[[1]], names(DEG_dfs)[1])
 Sputum.vs.Broth_volcano
+# ggsave(Sputum.vs.Broth_volcano,
+#        file = paste0("FINAL_Figure4C.png"),
+#        path = "Figures/CombinedFigures",
+#        dpi = 600,
+#        width = 6, height = 4, units = "in")
 
 ###########################################################
 ################# SUPPLEMENTAL FIGURE 2 ###################

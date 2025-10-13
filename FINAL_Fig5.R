@@ -17,6 +17,7 @@ facet_themes <- theme(strip.background=element_rect(fill="white", linewidth = 0.
 
 
 
+
 SputumVsBroth_iModulons <- DEG_dfs$Sputum.vs.Broth_iModulons
 
 SputumVsBroth_iModulons <- SputumVsBroth_iModulons %>%
@@ -44,6 +45,24 @@ SputumVsBroth_iModulons2 <- SputumVsBroth_iModulons %>%
   mutate(iModulonCategory2 = factor(iModulonCategory2, levels = c("Fatty Acid and Cholesterol", "Growth", "DosR", "Metal","Virulence and Persistence", "Other")))
 
 
+my_plot_themes2 <- theme_bw(base_family = "Arial") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(legend.position = "right",legend.text=element_text(size=7),
+        legend.title = element_text(size = 7),
+        axis.ticks.y = element_blank(),
+        # legend.title = element_blank(),
+        plot.title = element_text(size=7),
+        axis.title.x = element_text(size=12),
+        axis.text.x = element_text(angle = 0, size=9, vjust=0, hjust=0.5),
+        axis.title.y = element_text(size=7),
+        axis.text.y = element_blank(),
+        panel.border = element_rect(color = "black", fill = NA, size = 1),
+        plot.subtitle = element_text(size=7))
+facet_themes2 <- theme(strip.background=element_rect(fill="white", linewidth = 0.9),
+                      strip.text = element_text(size = 12),
+                      panel.border = element_rect(color = "black", fill = NA, size = 1))
+
+
 Fig5 <- SputumVsBroth_iModulons2 %>%
   filter(PathName %in% Fav_Pathways) %>%
   filter(iModulonCategory2 != "Virulence and Persistence") %>% 
@@ -65,5 +84,10 @@ Fig5 <- SputumVsBroth_iModulons2 %>%
   scale_x_continuous(limits = c(-2, 4), breaks = seq(-2, 4, 1)) + 
   geom_vline(xintercept = 0) + 
   labs(y = NULL, x = "Log2Fold change") + 
-  my_plot_themes + facet_themes + theme(legend.position = "none")
+  my_plot_themes2 + facet_themes2 + theme(legend.position = "none")
 Fig5
+ggsave(Fig5,
+       file = paste0("Fig5_Thumbnail2.png"),
+       path = "Figures",
+       dpi = 600,
+       width = 4, height = 5, units = "in")

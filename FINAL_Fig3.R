@@ -137,7 +137,7 @@ Fig3F <- BiolSamples_pipeSummary %>%
   geom_point(size = 4, alpha = 0.8, stroke = 0.8, color = "black", fill = "#0072B2", shape = 21) + 
   scale_y_continuous(limits = c(0,100), breaks = seq(0, 100, 10)) +
   scale_x_continuous(limits = c(2,6), breaks = seq(2,6,1)) +
-  labs(y = "% reads aligning to Mtb") + 
+  labs(y = "% reads aligning to Mtb", x = "TTD (Day)") + 
   my_plot_themes + 
   stat_poly_line(method = "lm", se = F, level = 0.95, color = "grey23", alpha = 0.25) + 
   stat_poly_eq(aes(label = paste(after_stat(eq.label),
@@ -152,10 +152,10 @@ Fig3F
 
 combined <- plot_grid(Fig3A, Fig3B, Fig3C, Fig3D, Fig3E, Fig3F, align = "hv", axis = "tblr", nrow = 2, ncol = 3, rel_widths = c(1, 1, 1), rel_heights = c(1, 1))
 combined
-ggsave(combined,
-       file = paste0("FINAL_Figure3.pdf"),
-       path = "Figures/CombinedFigures",
-       width = 15, height = 10, units = "in")
+# ggsave(combined,
+#        file = paste0("FINAL_Figure3.pdf"),
+#        path = "Figures/CombinedFigures",
+#        width = 15, height = 10, units = "in")
 
 
 
