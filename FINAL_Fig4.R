@@ -76,7 +76,7 @@ Fig4A
 count_list <- list()
 
 # Loop through list of dataframes
-for (list_name in names(DEG_dfs)) {
+for (list_name in names(DEG_dfs)[1:11]) {
   
   # Get the current dataframe
   df <- DEG_dfs[[list_name]]
@@ -125,7 +125,7 @@ make_volcano_function <- function(my_df, graph_title) {
     ggplot(aes(x = LOG2FOLD, y = -log10(FDR_PVALUE), col = DE, label = Labels, text = GENE_NAME, label2 = GENE_ID)) + # text is for plotly, could be GENE_ID
     geom_point(alpha = 0.7) + 
     labs(title = graph_title) + 
-    geom_vline(xintercept = c(-1,1), col = "grey", linetype = "dashed") + 
+    geom_vline(xintercept = c(-2,2), col = "grey", linetype = "dashed") + 
     geom_hline(yintercept = -log10(0.05), col = "grey", linetype = "dashed") + 
     geom_text_repel(max.overlaps = 10, size = 3) +  
     
