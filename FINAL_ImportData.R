@@ -21,6 +21,7 @@ excel_sheets("metadata.xlsx")
 LimitofDetect_pipeSummary <- read_excel("metadata.xlsx", sheet = "LimitofDetection")
 CapturedVsNot_pipeSummary <- read_excel("metadata.xlsx", sheet = "CapturedVsNot")
 BiolSamples_pipeSummary <- read_excel("metadata.xlsx", sheet = "BiolSamples")
+ProbeTests_pipeSummary <- read_excel("metadata.xlsx", sheet = "ProbeTests")
 
 # Rearrange
 ordered_Probe <- c("Uncaptured", "Captured")
@@ -40,23 +41,28 @@ All_RawReads <- read_excel("rawreads.xlsx", sheet = "All_RawReads")
 
 NumRawReads <- round(colSums(All_RawReads %>% column_to_rownames("X")))
 
+# Add N_Genomic
 LimitofDetect_pipeSummary$N_Genomic_Rv <- NumRawReads[LimitofDetect_pipeSummary$SampleID]
 CapturedVsNot_pipeSummary$N_Genomic_Rv <- NumRawReads[CapturedVsNot_pipeSummary$SampleID]
 BiolSamples_pipeSummary$N_Genomic_Rv <- NumRawReads[BiolSamples_pipeSummary$SampleID]
+ProbeTests_pipeSummary$N_Genomic_Rv <- NumRawReads[ProbeTests_pipeSummary$SampleID]
 
 # Add P_Genomic
 LimitofDetect_pipeSummary <- LimitofDetect_pipeSummary %>% mutate(P_Genomic_Rv = round((N_Genomic_Rv/RawReads)*100, 2))
 CapturedVsNot_pipeSummary <- CapturedVsNot_pipeSummary %>% mutate(P_Genomic_Rv = round((N_Genomic_Rv/RawReads)*100, 2))
 BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>% mutate(P_Genomic_Rv = round((N_Genomic_Rv/RawReads)*100, 2))
+ProbeTests_pipeSummary <- ProbeTests_pipeSummary %>% mutate(P_Genomic_Rv = round((N_Genomic_Rv/RawReads)*100, 2))
 
 # N_NonCodingMtbRNA
 LimitofDetect_pipeSummary <- LimitofDetect_pipeSummary %>% mutate(N_NonCodingMtbRNA = RawReads - N_Genomic_Rv - N_RiboClear - N_NoHit)
 CapturedVsNot_pipeSummary <- CapturedVsNot_pipeSummary %>% mutate(N_NonCodingMtbRNA = RawReads - N_Genomic_Rv - N_RiboClear - N_NoHit)
 BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>% mutate(N_NonCodingMtbRNA = RawReads - N_Genomic_Rv - N_RiboClear - N_NoHit)
+ProbeTests_pipeSummary <- ProbeTests_pipeSummary %>% mutate(N_NonCodingMtbRNA = RawReads - N_Genomic_Rv - N_RiboClear - N_NoHit)
 
 LimitofDetect_pipeSummary <- LimitofDetect_pipeSummary %>% mutate(P_NonCodingMtbRNA = round((N_NonCodingMtbRNA/RawReads)*100, 2))
 CapturedVsNot_pipeSummary <- CapturedVsNot_pipeSummary %>% mutate(P_NonCodingMtbRNA = round((N_NonCodingMtbRNA/RawReads)*100, 2))
 BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>% mutate(P_NonCodingMtbRNA = round((N_NonCodingMtbRNA/RawReads)*100, 2))
+ProbeTests_pipeSummary <- ProbeTests_pipeSummary %>% mutate(P_NonCodingMtbRNA = round((N_NonCodingMtbRNA/RawReads)*100, 2))
 
 
 ###########################################################
@@ -69,11 +75,34 @@ NumGoodReads <- colSums(All_RawReads >= 10)
 LimitofDetect_pipeSummary$AtLeast.10.Reads <- NumGoodReads[LimitofDetect_pipeSummary$SampleID]
 CapturedVsNot_pipeSummary$AtLeast.10.Reads <- NumGoodReads[CapturedVsNot_pipeSummary$SampleID]
 BiolSamples_pipeSummary$AtLeast.10.Reads <- NumGoodReads[BiolSamples_pipeSummary$SampleID]
+ProbeTests_pipeSummary$AtLeast.10.Reads <- NumGoodReads[ProbeTests_pipeSummary$SampleID]
 
 # Add transcriptional coverage
 LimitofDetect_pipeSummary <- LimitofDetect_pipeSummary %>% mutate(Txn_Coverage = round(AtLeast.10.Reads/4030*100, 2))
 CapturedVsNot_pipeSummary <- CapturedVsNot_pipeSummary %>% mutate(Txn_Coverage = round(AtLeast.10.Reads/4030*100, 2))
 BiolSamples_pipeSummary <- BiolSamples_pipeSummary %>% mutate(Txn_Coverage = round(AtLeast.10.Reads/4030*100, 2))
+ProbeTests_pipeSummary <- ProbeTests_pipeSummary %>% mutate(Txn_Coverage = round(AtLeast.10.Reads/4030*100, 2))
+
+###########################################################
+############ EXPORT COMPLETE PIPE SUMMARIES  ##############
+
+pipeSummary_wb <- createWorkbook()
+addWorksheet(pipeSummary_wb, "CapturedVsNot")
+writeData(pipeSummary_wb, "CapturedVsNot", CapturedVsNot_pipeSummary)
+addWorksheet(pipeSummary_wb, "LimitofDetection")
+writeData(pipeSummary_wb, "LimitofDetection", LimitofDetect_pipeSummary)
+addWorksheet(pipeSummary_wb, "BiolSamples")
+writeData(pipeSummary_wb, "BiolSamples", BiolSamples_pipeSummary)
+addWorksheet(pipeSummary_wb, "ProbeTests")
+writeData(pipeSummary_wb, "ProbeTests", ProbeTests_pipeSummary)
+
+# Save the workbook
+saveWorkbook(pipeSummary_wb, "Metadata_2025.10.27_v2.xlsx", overwrite = FALSE)
+
+
+
+
+
 
 ###########################################################
 ##################### CONVERT TO TPM ######################

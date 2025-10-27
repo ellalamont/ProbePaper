@@ -75,8 +75,13 @@ LimitofDetect_pipeSummary <- ProbeTest5_pipeSummary %>%
 THP1_Control_pipeSummary <- ProbeTest5_pipeSummary %>% 
   filter(str_detect(SampleID, "Control"))
 
-
-
+# TWO PROBE PREPS 
+ProbeA_pipeSummary <- ProbeTest3_pipeSummary %>% filter(SampleID %in% c("THP1_1e6_1_Probe_3D_100_S1", "THP1_1e6_2_Probe_3D_50_S2", "THP1_1e6_3_Probe_3D_25_S3", "THP1_1e6_4_Probe_3D_10_S4", "THP1_1e6_5_Probe_1_S5")) %>% 
+  mutate(Run = "ProbeTest3")
+ProbeTest4_pipeSummary <- read.csv("Data/ProbeTest4/Pipeline.Summary.Details.csv") 
+ProbeB_pipeSummary <- ProbeTest4_pipeSummary %>% filter(SampleID %in% c("THP1_1e6_1_S41", "THP1_1e6_2_S42", "THP1_1e6_3_S43", "THP1_1e6_4_S44", "THP1_1e6_5_S45")) %>% 
+  mutate(Run = "ProbeTest4")
+ProbeTestAB_pipeSummary <- merge(ProbeA_pipeSummary, ProbeB_pipeSummary, all = T)
 
 
 ### MERGE the pipeSummaries for Biological Samples ###
@@ -111,9 +116,11 @@ addWorksheet(pipeSummary_wb, "LimitofDetection")
 writeData(pipeSummary_wb, "LimitofDetection", LimitofDetect_pipeSummary)
 addWorksheet(pipeSummary_wb, "BiolSamples")
 writeData(pipeSummary_wb, "BiolSamples", BiolSamples_pipeSummary)
+addWorksheet(pipeSummary_wb, "ProbeTests")
+writeData(pipeSummary_wb, "ProbeTests", ProbeTestAB_pipeSummary)
 
 # Save the workbook
-saveWorkbook(pipeSummary_wb, "Metadata.xlsx", overwrite = FALSE)
+saveWorkbook(pipeSummary_wb, "Metadata_2025.10.27.xlsx", overwrite = FALSE)
 # This has then been edited in excel
 
 
