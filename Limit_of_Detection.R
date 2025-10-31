@@ -81,6 +81,7 @@ LimitofDetect_10Reads_Fig1 <- LimitofDetect_pipeSummary %>%
   ggerrorplot(x = "Ra_cells2", y = "Txn_Coverage", desc_stat = "mean_sd", error.plot = "errorbar", add = "mean", color = "black", size = 0.4,  # Size of error bars
               add.params = list(size = 0.4)) +  # Size of mean points
   geom_point(alpha = 0.7, position = position_jitter(width = 0.1, seed = 42), size = 1) + 
+  geom_text_repel(aes(label = format(SampleID, big.mark = ",")), size= 2.5, box.padding = 0.4, segment.color = NA, max.overlaps = Inf) + 
   scale_y_continuous(limits = c(0,100), breaks = seq(0, 100, 10)) + 
   geom_hline(yintercept = 80, linetype = "dashed", alpha = 0.5) + 
   geom_hline(yintercept = 50, linetype = "dashed", alpha = 0.5) + 
@@ -123,8 +124,8 @@ LimitofDetect_tpm_Log10 <- LimitofDetect_tpm_Log10 %>%
 ###################################################################
 ############################## 1e2 VS 1e6 #########################
 
-Sample1 <- "AVERAGE_1e2" # Broth Not Captured
-Sample2 <- "AVERAGE_1e6" # THP1 spiked Captured
+Sample1 <- "AVERAGE_1e2"
+Sample2 <- "AVERAGE_1e6"
 ScatterCorr <- LimitofDetect_tpm_Log10 %>% 
   ggplot(aes(x = .data[[Sample1]], y = .data[[Sample2]])) + 
   geom_point(aes(text = Gene), alpha = 0.7, size = 0.5, color = "black") +
@@ -142,6 +143,70 @@ LimitofDetect_ScatterCorr <- ScatterCorr
 #        file = "1e2.vs.1e6_Correlation.pdf",
 #        path = "Figures_preNonCodingRemoval/Limit_of_Detection",
 #        width = 7, height = 5, units = "in")
+
+
+###################################################################
+###################### COMPARE SINGLE SAMPLES #####################
+
+LimitofDetect_pipeSummary <- LimitofDetect_pipeSummary %>% mutate(Coverage = round(AtLeast.10.Reads/4499*100))
+
+Sample1 <- "THP1_1e4_3" # 4_1, 4_2, 4_3, 3_3, 3_2, 2_3
+Sample2 <- "THP1_1e6_1a" # 3a, 1a, 2b
+ScatterCorr <- LimitofDetect_tpm_Log10 %>% 
+  # select(Gene, .data[[Sample1]], .data[[Sample2]]) %>%
+  # filter(if_all(everything(), ~ . >= 1)) %>%
+  ggplot(aes(x = .data[[Sample1]], y = .data[[Sample2]])) + 
+  geom_point(aes(text = Gene), alpha = 0.7, size = 0.5, color = "black") +
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
+  labs(x = paste0("Log10(TPM+1)\n", Sample1, " ", LimitofDetect_pipeSummary %>% filter(str_detect(SampleID, Sample1)) %>% select(Coverage) %>% pull(), "% coverage"),
+    y = paste0("Log10(TPM+1)\n", Sample2, " ", LimitofDetect_pipeSummary %>% filter(str_detect(SampleID, Sample2)) %>% select(Coverage) %>% pull(), "% coverage"), ) + 
+  stat_cor(method="pearson") + # add a correlation to the plot
+  my_plot_themes
+ScatterCorr
+# ggplotly(ScatterCorr)
+ggsave(ScatterCorr,
+       file = paste0(Sample1, ".vs.", Sample2, ".pdf"),
+       path = "Figures_preNonCodingRemoval/Limit_of_Detection/InterestingCorrelations",
+       width = 7, height = 5, units = "in")
+
+
+###################################################################
+########## LOOP THROUGH SINGLE SAMPLE CORRELATION PLOTS ###########
+
+# Not quite doing all of them...
+
+# my_path <- "Figures_preNonCodingRemoval/Limit_of_Detection/AllCorrelations"
+# 
+# for (i in 2:(length(colnames(LimitofDetect_tpm_Log10)) -1 -1)) {
+#   for (j in (i + 1):(length(colnames(LimitofDetect_tpm_Log10))-1)) {
+#     if (i != j) { # Avoid comparing the same samples or repeating comparisons
+#       # Access the samples
+#       Sample1 <- colnames(LimitofDetect_tpm_Log10[i])
+#       Sample2 <- colnames(LimitofDetect_tpm_Log10[j])
+#       # cat("Comparing:", Sample1, "with", Sample2, "\n")
+#       filename <- paste0(Sample1, "_ComparedTo_", Sample2, ".pdf")
+#       
+#       ScatterCorr <- LimitofDetect_tpm_Log10 %>%
+#         ggplot(aes(x = .data[[Sample1]], y = .data[[Sample2]])) +
+#         geom_point(aes(text = Gene), alpha = 0.8, size = 2, color = "black") +
+#         geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
+#         labs(title = paste0(Sample1, " vs ", Sample2, " TPM (4499 genes)"),
+#              subtitle = "Pearson correlation",
+#              x = paste0(Sample1, " Log10(TPM)"), y = paste0(Sample2, " Log10(TPM)")) +
+#         stat_cor(method="pearson") + # add a correlation to the plot
+#         my_plot_themes
+#       
+#       ggsave(ScatterCorr,
+#              file = filename,
+#              path = my_path,
+#              width = 7, height = 5, units = "in")
+#     }
+#   }
+# }
+
+
+
+
 
 ###########################################################
 ################# PEARSON LOG10 GGCORRPLOT ################
