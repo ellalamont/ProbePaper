@@ -23,8 +23,8 @@ library(ggcorrplot)
 # library(edgeR) # for cpm
 # library(sva) # For ComBat_seq batch correction
 # devtools::install_github("NightingaleHealth/ggforestplot")
-# library(ggforestplot)
-# library(ggforce)
+library(ggforestplot)
+library(ggforce)
 
 # DuffyTools
 library(devtools)

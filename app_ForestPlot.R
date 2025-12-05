@@ -4,6 +4,7 @@ library(shiny)
 
 
 source("Import_data.R") # list_dfs and allGeneSetList
+library(DuffyTools)
 
 # Define UI ----
 ui <- fluidPage(

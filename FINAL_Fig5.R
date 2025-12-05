@@ -84,10 +84,10 @@ Fig5 <- SputumVsBroth_iModulons2 %>%
   scale_x_continuous(limits = c(-2, 4), breaks = seq(-2, 4, 1)) + 
   geom_vline(xintercept = 0) + 
   labs(y = NULL, x = "Log2Fold change") + 
-  my_plot_themes2 + facet_themes2 + theme(legend.position = "none")
+  my_plot_themes + facet_themes + theme(legend.position = "none")
 Fig5
-ggsave(Fig5,
-       file = paste0("Fig5_Thumbnail2.png"),
-       path = "Figures",
-       dpi = 600,
-       width = 4, height = 5, units = "in")
+# ggsave(Fig5,
+#        file = paste0("Fig5_Thumbnail2.png"),
+#        path = "Figures",
+#        dpi = 600,
+#        width = 4, height = 5, units = "in")
