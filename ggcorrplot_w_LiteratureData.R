@@ -100,7 +100,59 @@ ggcorrplot_Spearman_noNA <- corr %>%
        x = NULL, y = NULL)
 ggcorrplot_Spearman_noNA
 
-ggsave(ggcorrplot_Spearman_noNA,
-       file = "LiteratureData_Spearman_v1.pdf",
-       path = "Figures/ggcorrplot",
-       width = 7, height = 6, units = "in")
+# ggsave(ggcorrplot_Spearman_noNA,
+#        file = "LiteratureData_Spearman_v1.pdf",
+#        path = "Figures/ggcorrplot",
+#        width = 7, height = 6, units = "in")
+
+
+###########################################################
+############## SCATTER COMPARE JUST LAI2021 ###############
+# 12/08/25 in response to reviewer question about if it's highly expressed genes or lowly expressed genes that are different
+
+# I'll need to use the TPM? Try with ranked first
+
+Sample1 <- "CurrentStudy" 
+Sample2 <- "Lai2021" 
+Ranked_Scatter <- All_RankExpression_noNA %>% 
+  rownames_to_column("Gene") %>%
+  ggplot(aes(x = .data[[Sample1]], y = .data[[Sample2]])) + 
+  geom_point(aes(text = Gene), alpha = 0.7, size = 0.5, color = "black") +
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
+  labs(x = paste0(Sample1),
+       y = paste0(Sample2), ) + 
+  stat_cor(method="pearson") + 
+  my_plot_themes
+Ranked_Scatter
+# Wow this looks bad
+
+
+# Get the TPM data, log10 transform and average
+CurrentAndLai_tpmf <- merge(GoodBiolSamples_tpm_f, Lai2021_tpm_f, all = T, by = 0) %>%
+  select("Row.names", contains("W0"), contains("SRR")) %>% 
+  mutate(across(where(is.numeric), ~ .x + 1)) %>% # Add 1 to all the values
+  mutate(across(where(is.numeric), ~ log10(.x))) %>% # Log transform the values
+  column_to_rownames("Row.names") %>%
+  mutate(AVERAGE_Current = rowMeans(select(., contains("W0_")), na.rm = TRUE),
+    AVERAGE_Lai2021 = rowMeans(select(., contains("SRR")), na.rm = TRUE))
+
+Sample1 <- "AVERAGE_Current" 
+Sample2 <- "AVERAGE_Lai2021" 
+TPM_Scatter <- CurrentAndLai_tpmf %>% 
+  rownames_to_column("Gene") %>%
+  ggplot(aes(x = .data[[Sample1]], y = .data[[Sample2]])) + 
+  geom_point(aes(text = Gene), alpha = 0.7, size = 0.5, color = "black") +
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "blue") + 
+  labs(x = paste0(Sample1),
+       y = paste0(Sample2), ) + 
+  stat_cor(method="pearson") + 
+  scale_y_continuous(limits = c(0,4.5), breaks = seq(0, 4.5, 1)) + 
+  scale_x_continuous(limits = c(0,4.5), breaks = seq(0, 4.5, 1)) + 
+  my_plot_themes
+TPM_Scatter
+# Wow this looks bad
+
+ggplotly(TPM_Scatter)
+
+
+

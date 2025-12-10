@@ -50,7 +50,17 @@ saveWorkbook(wb, "DEG.xlsx", overwrite = TRUE)
 
 
 
+###########################################################
+###################### LAI2021 TPM ########################
+# 12/08/25
 
+Lai2021_RawReads <- read.csv("Data/LiteratureData/Lai2021_BobsPipeline/Mtb.Expression.Gene.Data.ReadsM_Lai2021.csv")
 
+source("Function_CalculateTPM.R")
 
+# Keep only the Rv#* coding genes 
+Lai2021_RawReads_f <- Lai2021_RawReads %>% 
+  filter(str_detect(X, "^Rv\\d+.*"))
+# Convert all to TPM
+Lai2021_tpm_f <- CalculateTPM_RvOnly(Lai2021_RawReads_f)
 
